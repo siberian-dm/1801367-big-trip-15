@@ -1,4 +1,14 @@
-import {createTripInfoTemplate, createSiteMenuTemplate, createTripFiltersTemplate, createTripSortTemplate, createTripPointFormTemplate} from './view/index.js';
+import {
+  createTripInfoTemplate,
+  createSiteMenuTemplate,
+  createTripFiltersTemplate,
+  createTripSortTemplate,
+  createAddTripPointFormTemplate,
+  createEditTripPointFormTemplate,
+  createTripPointTemplate
+} from './view/index.js';
+
+const TRIP_POINTS_NUMBER = 3;
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -19,4 +29,9 @@ render(tripInfoContainer, createTripInfoTemplate(), 'afterbegin');
 render(siteMenuContainer, createSiteMenuTemplate(), 'beforeend');
 render(tripFiltersContainer, createTripFiltersTemplate(), 'beforeend');
 render(tripEventsContainer, createTripSortTemplate(), 'afterbegin');
-render(tripEventListContainer, createTripPointFormTemplate(), 'beforeend');
+render(tripEventListContainer, createEditTripPointFormTemplate(), 'afterbegin');
+render(tripEventListContainer, createAddTripPointFormTemplate(), 'beforeend');
+
+for (let i = 0; i < TRIP_POINTS_NUMBER; i++) {
+  render(tripEventListContainer, createTripPointTemplate(), 'beforeend');
+}
