@@ -33,13 +33,13 @@ const generateDestination = () => (
   }
 );
 
-const generateTripPoint = () => {
+const generateTripPoint = (dateFrom, dateTo) => {
   const pointType = POINT_TYPES[getRandomInteger(0, POINT_TYPES.length - 1)];
   const pointOffers = OFFER_TYPES.find((offer) => offer.type === pointType).offers;
   return {
     'base_price': POINT_TYPE_BASE_PRICE[pointType],
-    'date_from': '2019-07-10T22:55:56.845Z',
-    'date_to': '2019-07-11T11:22:13.375Z',
+    'date_from': dateFrom,
+    'date_to': dateTo,
     'destination': generateDestination(),
     'id': '0',
     'is_favorite': !!getRandomInteger(),
@@ -48,4 +48,20 @@ const generateTripPoint = () => {
   };
 };
 
-export {generateTripPoint};
+const createTripPointObjectList = (objectsNumber) => {
+  let dateFrom = dayjs();
+  let dateTo = dateFrom.add(getRandomInteger(2, 12), 'hour');
+  const tripPointList = [];
+
+  for (let i = 0; i < objectsNumber; i++) {
+    if (i > 0) {
+      dateFrom = dateFrom.add(dateTo.minute() - dateFrom.minute() + getRandomInteger(120, 300), 'minute');
+      dateTo = dateFrom.add(getRandomInteger(120, 720), 'minute');
+    }
+    tripPointList.push(generateTripPoint(dateFrom, dateTo));
+  }
+
+  return tripPointList;
+};
+
+export {createTripPointObjectList};

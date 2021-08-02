@@ -7,7 +7,7 @@ import {
   createEditTripPointFormTemplate,
   createTripPointTemplate
 } from './view/index';
-import {generateTripPoint} from './mock/trip-point';
+import {createTripPointObjectList} from './mock/trip-point';
 
 const TRIP_POINTS_OBJECTS = 20;
 
@@ -15,7 +15,7 @@ const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-const tripPoints = new Array(TRIP_POINTS_OBJECTS).fill().map(generateTripPoint);
+const tripPoints = createTripPointObjectList(TRIP_POINTS_OBJECTS);
 
 const siteMainElement = document.querySelector('.page-body');
 const siteMenuContainer = siteMainElement.querySelector('.trip-controls__navigation');

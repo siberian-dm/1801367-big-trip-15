@@ -21,4 +21,4 @@ export const isTaskRepeating = (repeating) => Object.values(repeating).some(Bool
 
 export const humanizeDate = (Date) => dayjs(Date).format('YYYY-MM-DD');
 export const humanizeVisibleDate = (Date) => dayjs(Date).format('MMM D');
-export const humanizeEventTime = (Date) => dayjs(Date).format('HH-mm');
+export const humanizeEventTime = (Date) => dayjs(Date).format('HH:mm');
