@@ -49,14 +49,15 @@ const generateTripPoint = (dateFrom, dateTo) => {
 };
 
 const createTripPointObjectList = (objectsNumber) => {
+  const oneMinute = 6e4;
   let dateFrom = dayjs();
-  let dateTo = dateFrom.add(getRandomInteger(2, 12), 'hour');
+  let dateTo = dateFrom.add(getRandomInteger(20, 360), 'minute');
   const tripPointList = [];
 
   for (let i = 0; i < objectsNumber; i++) {
     if (i > 0) {
-      dateFrom = dateFrom.add(dateTo.minute() - dateFrom.minute() + getRandomInteger(120, 300), 'minute');
-      dateTo = dateFrom.add(getRandomInteger(120, 720), 'minute');
+      dateFrom = dateTo.add((dateTo - dateFrom) / oneMinute + getRandomInteger(20, 240), 'minute');
+      dateTo = dateFrom.add(getRandomInteger(20, 720), 'minute');
     }
     tripPointList.push(generateTripPoint(dateFrom, dateTo));
   }

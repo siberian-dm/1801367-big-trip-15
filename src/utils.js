@@ -13,12 +13,24 @@ export const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export const isTaskExpired = (dueDate) => dueDate === null ? false : dayjs().isAfter(dueDate, 'D');
+export const getHumanizeDate = (date) => dayjs(date).format('YYYY-MM-DD');
 
-export const isTaskExpiringToday = (dueDate) => dueDate === null ? false : dayjs(dueDate).isSame(dayjs(), 'D');
+export const getHumanizeVisibleDate = (date) => dayjs(date).format('MMM D');
 
-export const isTaskRepeating = (repeating) => Object.values(repeating).some(Boolean);
+export const getHumanizeEventTime = (date) => dayjs(date).format('HH:mm');
 
-export const humanizeDate = (Date) => dayjs(Date).format('YYYY-MM-DD');
-export const humanizeVisibleDate = (Date) => dayjs(Date).format('MMM D');
-export const humanizeEventTime = (Date) => dayjs(Date).format('HH:mm');
+export const getHumanizeEventDuration = (dateFrom, dateTo) => {
+  const oneMinuteToMs = 6e4;
+  const oneHourToMs = 3.6e6;
+  const duration = dateTo - dateFrom;
+
+  const hours = Math.floor(duration / oneHourToMs);
+  const minutes = Math.floor(duration % (oneHourToMs) / (oneMinuteToMs));
+
+  const hoursToString = (hours > 0 && hours < 10) ? `0${hours}H` : `${hours}H`;
+  const minutesToString = (minutes > 0 && minutes < 10) ? `0${minutes}M` : `${minutes}M`;
+
+  const humanizeEventDuration = hours === 0 ? minutesToString : `${hoursToString} ${minutesToString}`;
+
+  return humanizeEventDuration;
+};
