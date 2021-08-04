@@ -45,24 +45,7 @@ export const OFFER_TYPES = [
   },
   {
     'type': 'train',
-    'offers': [
-      {
-        'title': 'Add meal',
-        'price': 15,
-      },
-      {
-        'title': 'Switch to comfort class',
-        'price': 100,
-      },
-      {
-        'title': 'Choose seats',
-        'price': 5,
-      },
-      {
-        'title': 'Add luggage',
-        'price': 30,
-      },
-    ],
+    'offers': [],
   },
   {
     'type': 'ship',
@@ -136,31 +119,14 @@ export const OFFER_TYPES = [
         'price': 40,
       },
       {
-        'title': 'Lunch in city ',
+        'title': 'Lunch in city',
         'price': 30,
       },
     ],
   },
   {
     'type': 'restaurant',
-    'offers': [
-      {
-        'title': 'Vegetarian food',
-        'price': 50,
-      },
-      {
-        'title': 'Chinese cuisine',
-        'price': 20,
-      },
-      {
-        'title': 'Italian сuisine',
-        'price': 30,
-      },
-      {
-        'title': 'Restaurant Buffet',
-        'price': 40,
-      },
-    ],
+    'offers': [],
   },
 ];
 export const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];

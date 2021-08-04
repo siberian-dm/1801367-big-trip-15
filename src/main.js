@@ -3,7 +3,6 @@ import {
   createSiteMenuTemplate,
   createTripFiltersTemplate,
   createTripSortTemplate,
-  createAddTripPointFormTemplate,
   createEditTripPointFormTemplate,
   createTripPointTemplate
 } from './view/index';
@@ -32,9 +31,12 @@ render(tripInfoContainer, createTripInfoTemplate(), 'afterbegin');
 render(siteMenuContainer, createSiteMenuTemplate(), 'beforeend');
 render(tripFiltersContainer, createTripFiltersTemplate(), 'beforeend');
 render(tripEventsContainer, createTripSortTemplate(), 'afterbegin');
-render(tripEventListContainer, createEditTripPointFormTemplate(), 'afterbegin');
-render(tripEventListContainer, createAddTripPointFormTemplate(), 'beforeend');
 
 for (let i = 0; i < tripPoints.length; i++) {
-  render(tripEventListContainer, createTripPointTemplate(tripPoints[i]), 'beforeend');
+  if (i === 0) {
+    render(tripEventListContainer, createEditTripPointFormTemplate(tripPoints[i]), 'beforeend');
+  }
+  else {
+    render(tripEventListContainer, createTripPointTemplate(tripPoints[i]), 'beforeend');
+  }
 }

@@ -1,17 +1,16 @@
-// eslint-disable-next-line no-unused-vars
 import dayjs from 'dayjs';
 import {
   DESCRIPTIONS,
   OFFER_TYPES,
-  POINT_TYPES,
+  CITIES,
   POINT_TYPE_BASE_PRICE,
-  PHOTOS_URL,
-  CITIES
+  PHOTOS_URL
 } from './const';
+import {POINT_TYPES} from '../const';
 import {getRandomInteger} from '../utils';
 
 const DESCRIPTION_ROW_MAX = 5;
-const DESTINATION_PICTURES_MAX = 10;
+const DESTINATION_PICTURES_MAX = 5;
 
 const generateDescription = () => new Array(getRandomInteger(DESCRIPTION_ROW_MAX))
   .fill()
@@ -27,9 +26,9 @@ const generatePicture = () => (
 
 const generateDestination = () => (
   {
-    'description': generateDescription(),
+    'description': getRandomInteger() ? generateDescription() : '',
     'name': CITIES[getRandomInteger(0, CITIES.length - 1)],
-    'pictures': new Array(getRandomInteger(DESTINATION_PICTURES_MAX)).fill().map(generatePicture),
+    'pictures': new Array(getRandomInteger(0, DESTINATION_PICTURES_MAX)).fill().map(generatePicture),
   }
 );
 

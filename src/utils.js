@@ -17,6 +17,8 @@ export const getHumanizeDate = (date) => dayjs(date).format('YYYY-MM-DD');
 
 export const getHumanizeVisibleDate = (date) => dayjs(date).format('MMM D');
 
+export const getHumanizeVisibleDateInForm = (date) => dayjs(date).format('DD/MM/YY HH:mm');
+
 export const getHumanizeEventTime = (date) => dayjs(date).format('HH:mm');
 
 export const getHumanizeEventDuration = (dateFrom, dateTo) => {

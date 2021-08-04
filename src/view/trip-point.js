@@ -1,21 +1,17 @@
 import {getHumanizeDate, getHumanizeVisibleDate, getHumanizeEventTime, getHumanizeEventDuration} from '../utils';
 
-const createSelectedOffersTemplate = (offerList) => {
+const createSelectedOffersTemplate = (offers) => {
   let offerItems = '';
-  for (const offer of offerList) {
+  for (const offer of offers) {
     offerItems += `
     <li class="event__offer">
       <span class="event__offer-title">${offer.title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${offer.price}</span>
-    </li>
-    `;
+    </li>`;
   }
-  return `
-  <h4 class="visually-hidden">Offers:</h4>
-  <ul class="event__selected-offers">
-    ${offerItems}
-  </ul>`;
+
+  return offerItems;
 };
 
 export const createTripPointTemplate = (tripPoint) => {
@@ -33,9 +29,7 @@ export const createTripPointTemplate = (tripPoint) => {
     ? 'event__favorite-btn event__favorite-btn--active'
     : 'event__favorite-btn';
 
-  const eventSelectedOffers = offers.length > 0
-    ? createSelectedOffersTemplate(offers)
-    : '';
+  const eventSelectedOffers = offers.length > 0 ? createSelectedOffersTemplate(offers) : '';
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -55,7 +49,10 @@ export const createTripPointTemplate = (tripPoint) => {
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
       </p>
-      ${eventSelectedOffers}
+      <h4 class="visually-hidden">Offers:</h4>
+      <ul class="event__selected-offers">
+        ${eventSelectedOffers}
+      </ul>
       <button class="${favoriteClassName}" type="button">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
