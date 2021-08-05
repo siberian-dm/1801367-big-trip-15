@@ -1,6 +1,6 @@
 import {POINT_TYPES} from '../const';
 import {CITIES, OFFER_TYPES} from '../mock/const';
-import {getHumanizeVisibleDateInForm} from '../utils';
+import {getHumanizeVisibleDateForForm} from '../utils';
 
 const createEventTypeListTemplate = (pointTypes, selectedType) => {
   let eventTypeItems = '';
@@ -124,10 +124,10 @@ export const createEditTripPointFormTemplate = (tripPoint) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getHumanizeVisibleDateInForm(dateFrom)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getHumanizeVisibleDateForForm(dateFrom)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getHumanizeVisibleDateInForm(dateTo)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getHumanizeVisibleDateForForm(dateTo)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

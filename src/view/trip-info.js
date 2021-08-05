@@ -1,13 +1,29 @@
-export const createTripInfoTemplate = () => (
-  `<section class="trip-main__trip-info  trip-info">
-    <div class="trip-info__main">
-      <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
+import {getHumanizeVisibleDateForInfo} from '../utils';
 
-      <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
-    </div>
+const TRIP_POINT_TITLE_COUNT = 3;
 
-    <p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
-    </p>
-  </section>`
-);
+export const createTripInfoTemplate = (tripPoints) => {
+  const tripInfoTitle = tripPoints.length <= TRIP_POINT_TITLE_COUNT
+    ? tripPoints.map((tripPoint) => tripPoint.destination.name).join(' &mdash; ')
+    : `${tripPoints[0].destination.name} &mdash; ... &mdash; ${tripPoints[tripPoints.length - 1].destination.name}`;
+
+  const tripInfoDates = getHumanizeVisibleDateForInfo(tripPoints[0].date_from, tripPoints[tripPoints.length - 1].date_to);
+
+  const tripInfoCost = tripPoints.reduce((totalCost, tripPoint) => {
+    const {base_price: basePrice, offers} = tripPoint;
+    return totalCost + basePrice + offers.reduce((cost, offer) => cost + offer.price, 0);
+  }, 0);
+
+  return `
+    <section class="trip-main__trip-info  trip-info">
+      <div class="trip-info__main">
+        <h1 class="trip-info__title">${tripInfoTitle}</h1>
+
+        <p class="trip-info__dates">${tripInfoDates}</p>
+      </div>
+
+      <p class="trip-info__cost">
+        Total: &euro;&nbsp;<span class="trip-info__cost-value">${tripInfoCost}</span>
+      </p>
+    </section>`;
+};

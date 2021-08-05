@@ -6,15 +6,15 @@ import {
   createEditTripPointFormTemplate,
   createTripPointTemplate
 } from './view/index';
-import {createTripPointObjectList} from './mock/trip-point';
+import {createTripPointObjects} from './mock/trip-point';
 
-const TRIP_POINTS_OBJECTS = 20;
+const TRIP_POINTS_OBJECTS = 15;
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-const tripPoints = createTripPointObjectList(TRIP_POINTS_OBJECTS);
+const tripPoints = createTripPointObjects(TRIP_POINTS_OBJECTS);
 
 const siteMainElement = document.querySelector('.page-body');
 const siteMenuContainer = siteMainElement.querySelector('.trip-controls__navigation');
@@ -27,7 +27,7 @@ tripEventListContainer.classList.add('trip-events__list');
 const tripEventsContainer = siteMainElement.querySelector('.trip-events')
   .insertAdjacentElement('beforeend', tripEventListContainer);
 
-render(tripInfoContainer, createTripInfoTemplate(), 'afterbegin');
+render(tripInfoContainer, createTripInfoTemplate(tripPoints), 'afterbegin');
 render(siteMenuContainer, createSiteMenuTemplate(), 'beforeend');
 render(tripFiltersContainer, createTripFiltersTemplate(), 'beforeend');
 render(tripEventsContainer, createTripSortTemplate(), 'afterbegin');
