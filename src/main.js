@@ -10,9 +10,11 @@ import {createTripPointObjects} from './mock/trip-point';
 
 const TRIP_POINTS_OBJECTS = 15;
 
+
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
+
 
 const tripPoints = createTripPointObjects(TRIP_POINTS_OBJECTS);
 

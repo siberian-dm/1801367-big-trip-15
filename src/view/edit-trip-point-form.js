@@ -2,6 +2,7 @@ import {POINT_TYPES} from '../const';
 import {CITIES, OFFER_TYPES} from '../mock/const';
 import {getHumanizeVisibleDateForForm} from '../utils';
 
+
 const createEventTypeListTemplate = (pointTypes, selectedType) => {
   let eventTypeItems = '';
   for (const pointType of pointTypes) {
@@ -11,8 +12,10 @@ const createEventTypeListTemplate = (pointTypes, selectedType) => {
       <label class="event__type-label  event__type-label--${pointType}" for="event-type-${pointType}-1">${pointType}</label>
     </div>`;
   }
+
   return eventTypeItems;
 };
+
 
 const createDestinationListTemplate = (cities) => {
   let destinationItems = '';
@@ -23,8 +26,10 @@ const createDestinationListTemplate = (cities) => {
   return destinationItems;
 };
 
+
 const createEventAvailableOffersTemplate = (offers, selectedOffers) => {
   const selectedOffersList = selectedOffers.map((offer) => offer.title);
+
   let offerItems = '';
   for (const offer of offers) {
     const isChecked = !!selectedOffersList.includes(offer.title);
@@ -49,11 +54,12 @@ const createEventAvailableOffersTemplate = (offers, selectedOffers) => {
     </section>`;
 };
 
+
 const createEventDestinationTemplate = (destination) => {
   const {description, pictures} = destination;
-  let pictureItems = '';
 
-  if (pictures.length > 0) {
+  let pictureItems = '';
+  if (pictures.length) {
     for (const picture of pictures) {
       pictureItems += `<img class="event__photo" src="${picture.src}" alt="Event photo">`;
     }
@@ -72,6 +78,7 @@ const createEventDestinationTemplate = (destination) => {
     </section>`;
 };
 
+
 export const createEditTripPointFormTemplate = (tripPoint) => {
   const {
     base_price: basePrice,
@@ -85,11 +92,11 @@ export const createEditTripPointFormTemplate = (tripPoint) => {
 
   const eventTypeOffers = OFFER_TYPES.find((offer) => offer.type === type).offers;
 
-  const eventAvailableOffers = eventTypeOffers.length > 0
+  const eventAvailableOffers = eventTypeOffers.length
     ? createEventAvailableOffersTemplate(eventTypeOffers, offers)
     : '';
 
-  const destinationDescription = destination.description || destination.pictures.length > 0
+  const destinationDescription = destination.description || destination.pictures.length
     ? createEventDestinationTemplate(destination)
     : '';
 

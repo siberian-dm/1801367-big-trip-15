@@ -2,17 +2,22 @@ import {getHumanizeVisibleDateForInfo} from '../utils';
 
 const TRIP_POINT_TITLE_COUNT = 3;
 
+
 export const createTripInfoTemplate = (tripPoints) => {
+  const firstTripPoint = tripPoints[0];
+  const lastTripPoint = tripPoints[tripPoints.length - 1];
+  const initialValue = 0;
+
   const tripInfoTitle = tripPoints.length <= TRIP_POINT_TITLE_COUNT
     ? tripPoints.map((tripPoint) => tripPoint.destination.name).join(' &mdash; ')
-    : `${tripPoints[0].destination.name} &mdash; ... &mdash; ${tripPoints[tripPoints.length - 1].destination.name}`;
+    : `${firstTripPoint.destination.name} &mdash; ... &mdash; ${lastTripPoint.destination.name}`;
 
-  const tripInfoDates = getHumanizeVisibleDateForInfo(tripPoints[0].date_from, tripPoints[tripPoints.length - 1].date_to);
+  const tripInfoDates = getHumanizeVisibleDateForInfo(firstTripPoint.date_from, lastTripPoint.date_to);
 
   const tripInfoCost = tripPoints.reduce((totalCost, tripPoint) => {
     const {base_price: basePrice, offers} = tripPoint;
-    return totalCost + basePrice + offers.reduce((cost, offer) => cost + offer.price, 0);
-  }, 0);
+    return totalCost + basePrice + offers.reduce((cost, offer) => cost + offer.price, initialValue);
+  }, initialValue);
 
   return `
     <section class="trip-main__trip-info  trip-info">

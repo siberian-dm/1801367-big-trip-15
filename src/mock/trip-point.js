@@ -12,10 +12,12 @@ import {getRandomInteger} from '../utils';
 const DESCRIPTION_ROW_MAX = 5;
 const DESTINATION_PICTURES_MAX = 5;
 
+
 const generateDescription = () => new Array(getRandomInteger(DESCRIPTION_ROW_MAX))
   .fill()
   .map(() => DESCRIPTIONS[getRandomInteger(0, DESCRIPTIONS.length - 1)])
   .join(' ');
+
 
 const generatePicture = () => (
   {
@@ -24,6 +26,7 @@ const generatePicture = () => (
   }
 );
 
+
 const generateDestination = () => (
   {
     'description': getRandomInteger() ? generateDescription() : '',
@@ -31,6 +34,7 @@ const generateDestination = () => (
     'pictures': new Array(getRandomInteger(0, DESTINATION_PICTURES_MAX)).fill().map(generatePicture),
   }
 );
+
 
 const generateTripPoint = (dateFrom, dateTo) => {
   const pointType = POINT_TYPES[getRandomInteger(0, POINT_TYPES.length - 1)];
@@ -46,6 +50,7 @@ const generateTripPoint = (dateFrom, dateTo) => {
     'type': pointType,
   };
 };
+
 
 const createTripPointObjects = (objectsNumber) => {
   const oneMinute = 6e4;
