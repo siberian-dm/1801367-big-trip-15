@@ -1,44 +1,36 @@
-import {
-  createTripInfoTemplate,
-  createSiteMenuTemplate,
-  createTripFiltersTemplate,
-  createTripSortTemplate,
-  createEditTripPointFormTemplate,
-  createTripPointTemplate
-} from './view/index';
+import SiteMenuView from './view/site-menu';
+import FilterListView from './view/filters';
+import SortView from './view/sort';
+import EventListView from './view/event-list';
+import {createTripInfoTemplate} from './view/trip-info';
+import {createEditTripPointFormTemplate} from './view/edit-event-form';
+import {createTripPointTemplate} from './view/event';
 import {createTripPointObjects} from './mock/trip-point';
+import {renderElement, renderTemplate, RenderPosition} from './utils';
 
 const TRIP_POINTS_OBJECTS = 15;
 
-
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
-
 const tripPoints = createTripPointObjects(TRIP_POINTS_OBJECTS);
 
-const siteMainElement = document.querySelector('.page-body');
-const siteMenuContainer = siteMainElement.querySelector('.trip-controls__navigation');
-const tripFiltersContainer = siteMainElement.querySelector('.trip-controls__filters');
-const tripInfoContainer = siteMainElement.querySelector('.trip-main');
+const siteMainContainer = document.querySelector('.page-body');
+const siteMenuContainer = siteMainContainer.querySelector('.trip-controls__navigation');
+const filterListContainer = siteMainContainer.querySelector('.trip-controls__filters');
+const tripInfoContainer = siteMainContainer.querySelector('.trip-main');
+const tripEventsContainer = siteMainContainer.querySelector('.trip-events');
 
-const tripEventListContainer = document.createElement('ul');
-tripEventListContainer.classList.add('trip-events__list');
+renderTemplate(tripInfoContainer, createTripInfoTemplate(tripPoints), 'afterbegin');
+renderElement(siteMenuContainer, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
+renderElement(filterListContainer, new FilterListView().getElement(), RenderPosition.BEFOREEND);
+renderElement(tripEventsContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+renderElement(tripEventsContainer, new EventListView().getElement(), RenderPosition.BEFOREEND);
 
-const tripEventsContainer = siteMainElement.querySelector('.trip-events')
-  .insertAdjacentElement('beforeend', tripEventListContainer);
 
-render(tripInfoContainer, createTripInfoTemplate(tripPoints), 'afterbegin');
-render(siteMenuContainer, createSiteMenuTemplate(), 'beforeend');
-render(tripFiltersContainer, createTripFiltersTemplate(), 'beforeend');
-render(tripEventsContainer, createTripSortTemplate(), 'afterbegin');
-
+const eventListContainer = tripEventsContainer.querySelector('.trip-events__list');
 for (let i = 0; i < tripPoints.length; i++) {
   if (i === 0) {
-    render(tripEventListContainer, createEditTripPointFormTemplate(tripPoints[i]), 'beforeend');
+    renderTemplate(eventListContainer, createEditTripPointFormTemplate(tripPoints[i]), 'beforeend');
   }
   else {
-    render(tripEventListContainer, createTripPointTemplate(tripPoints[i]), 'beforeend');
+    renderTemplate(eventListContainer, createTripPointTemplate(tripPoints[i]), 'beforeend');
   }
 }
