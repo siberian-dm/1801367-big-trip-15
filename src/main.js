@@ -5,6 +5,7 @@ import SortView from './view/sort';
 import EventListView from './view/event-list';
 import EditEventFormView from './view/edit-event-form';
 import EventView from './view/event';
+import NoEventView from './view/no-events';
 import {createTripPointObjects} from './mock/trip-point';
 import {render, RenderPosition} from './utils';
 
@@ -58,15 +59,21 @@ const siteMenuContainer = siteMainContainer.querySelector('.trip-controls__navig
 const filterListContainer = siteMainContainer.querySelector('.trip-controls__filters');
 const tripEventsContainer = siteMainContainer.querySelector('.trip-events');
 
-render(tripInfoContainer, new TripInfoView(events).getElement(), RenderPosition.AFTERBEGIN);
 render(siteMenuContainer, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
 render(filterListContainer, new FilterListView().getElement(), RenderPosition.BEFOREEND);
-render(tripEventsContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
 
 const eventListComponent = new EventListView();
 
 render(tripEventsContainer, eventListComponent.getElement(), RenderPosition.BEFOREEND);
 
-for (let i = 0; i < events.length; i++) {
-  renderEvent(eventListComponent.getElement(), events[i]);
+if (!events.length){
+  render(eventListComponent.getElement(), new NoEventView().getElement(), RenderPosition.BEFOREEND);
+}
+else {
+  render(tripInfoContainer, new TripInfoView(events).getElement(), RenderPosition.AFTERBEGIN);
+  render(tripEventsContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+
+  for (let i = 0; i < events.length; i++) {
+    renderEvent(eventListComponent.getElement(), events[i]);
+  }
 }
