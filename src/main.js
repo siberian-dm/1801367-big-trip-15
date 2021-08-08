@@ -3,14 +3,14 @@ import SiteMenuView from './view/site-menu';
 import FilterListView from './view/filters';
 import SortView from './view/sort';
 import EventListView from './view/event-list';
-import {createEditTripPointFormTemplate} from './view/edit-event-form';
+import EditEventFormView from './view/edit-event-form';
 import {createTripPointTemplate} from './view/event';
 import {createTripPointObjects} from './mock/trip-point';
 import {renderElement, renderTemplate, RenderPosition} from './utils';
 
-const TRIP_POINTS_OBJECTS = 15;
+const TRIP_EVENT_COUNT = 15;
 
-const events = createTripPointObjects(TRIP_POINTS_OBJECTS);
+const events = createTripPointObjects(TRIP_EVENT_COUNT);
 
 const siteMainContainer = document.querySelector('.page-body');
 const tripInfoContainer = siteMainContainer.querySelector('.trip-main');
@@ -28,7 +28,7 @@ renderElement(tripEventsContainer, new EventListView().getElement(), RenderPosit
 const eventListContainer = tripEventsContainer.querySelector('.trip-events__list');
 for (let i = 0; i < events.length; i++) {
   if (i === 0) {
-    renderTemplate(eventListContainer, createEditTripPointFormTemplate(events[i]), 'beforeend');
+    renderElement(eventListContainer, new EditEventFormView(events[i]).getElement(), RenderPosition.BEFOREEND);
   }
   else {
     renderTemplate(eventListContainer, createTripPointTemplate(events[i]), 'beforeend');
