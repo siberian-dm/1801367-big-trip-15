@@ -12,6 +12,31 @@ const TRIP_EVENT_COUNT = 15;
 
 const events = createTripPointObjects(TRIP_EVENT_COUNT);
 
+const renderEvent = (eventListContainer, event) => {
+  const eventComponent = new EventView(event);
+  const editEventFormComponent = new EditEventFormView(event);
+
+  const replaceCardToForm = () => {
+    eventListContainer.replaceChild(editEventFormComponent.getElement(), eventComponent.getElement());
+  };
+
+  const replaceFormToCard = () => {
+    eventListContainer.replaceChild(eventComponent.getElement(), editEventFormComponent.getElement());
+  };
+
+  eventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replaceCardToForm();
+  });
+
+  editEventFormComponent.getElement().querySelector('form').addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+  });
+
+  render(eventListContainer, eventComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
+
 const siteMainContainer = document.querySelector('.page-body');
 const tripInfoContainer = siteMainContainer.querySelector('.trip-main');
 const siteMenuContainer = siteMainContainer.querySelector('.trip-controls__navigation');
@@ -22,15 +47,11 @@ render(tripInfoContainer, new TripInfoView(events).getElement(), RenderPosition.
 render(siteMenuContainer, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
 render(filterListContainer, new FilterListView().getElement(), RenderPosition.BEFOREEND);
 render(tripEventsContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
-render(tripEventsContainer, new EventListView().getElement(), RenderPosition.BEFOREEND);
 
+const eventListComponent = new EventListView();
 
-const eventListContainer = tripEventsContainer.querySelector('.trip-events__list');
+render(tripEventsContainer, eventListComponent.getElement(), RenderPosition.BEFOREEND);
+
 for (let i = 0; i < events.length; i++) {
-  if (i === 0) {
-    render(eventListContainer, new EditEventFormView(events[i]).getElement(), RenderPosition.BEFOREEND);
-  }
-  else {
-    render(eventListContainer, new EventView(events[i]).getElement(), RenderPosition.BEFOREEND);
-  }
+  renderEvent(eventListComponent.getElement(), events[i]);
 }
