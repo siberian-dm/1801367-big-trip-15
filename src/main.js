@@ -4,9 +4,9 @@ import FilterListView from './view/filters';
 import SortView from './view/sort';
 import EventListView from './view/event-list';
 import EditEventFormView from './view/edit-event-form';
-import {createTripPointTemplate} from './view/event';
+import EventView from './view/event';
 import {createTripPointObjects} from './mock/trip-point';
-import {renderElement, renderTemplate, RenderPosition} from './utils';
+import {render, RenderPosition} from './utils';
 
 const TRIP_EVENT_COUNT = 15;
 
@@ -18,19 +18,19 @@ const siteMenuContainer = siteMainContainer.querySelector('.trip-controls__navig
 const filterListContainer = siteMainContainer.querySelector('.trip-controls__filters');
 const tripEventsContainer = siteMainContainer.querySelector('.trip-events');
 
-renderElement(tripInfoContainer, new TripInfoView(events).getElement(), RenderPosition.AFTERBEGIN);
-renderElement(siteMenuContainer, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
-renderElement(filterListContainer, new FilterListView().getElement(), RenderPosition.BEFOREEND);
-renderElement(tripEventsContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
-renderElement(tripEventsContainer, new EventListView().getElement(), RenderPosition.BEFOREEND);
+render(tripInfoContainer, new TripInfoView(events).getElement(), RenderPosition.AFTERBEGIN);
+render(siteMenuContainer, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
+render(filterListContainer, new FilterListView().getElement(), RenderPosition.BEFOREEND);
+render(tripEventsContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+render(tripEventsContainer, new EventListView().getElement(), RenderPosition.BEFOREEND);
 
 
 const eventListContainer = tripEventsContainer.querySelector('.trip-events__list');
 for (let i = 0; i < events.length; i++) {
   if (i === 0) {
-    renderElement(eventListContainer, new EditEventFormView(events[i]).getElement(), RenderPosition.BEFOREEND);
+    render(eventListContainer, new EditEventFormView(events[i]).getElement(), RenderPosition.BEFOREEND);
   }
   else {
-    renderTemplate(eventListContainer, createTripPointTemplate(events[i]), 'beforeend');
+    render(eventListContainer, new EventView(events[i]).getElement(), RenderPosition.BEFOREEND);
   }
 }
