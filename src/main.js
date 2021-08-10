@@ -7,7 +7,7 @@ import EditEventFormView from './view/edit-event-form';
 import EventView from './view/event';
 import NoEventView from './view/no-events';
 import {createTripPointObjects} from './mock/trip-point';
-import {render, replace, RenderPosition} from './utils/render';
+import {render, replace, remove, RenderPosition} from './utils/render';
 
 const TRIP_EVENT_COUNT = 15;
 
@@ -45,6 +45,12 @@ const renderEvent = (eventListContainer, event) => {
 
   editEventFormComponent.setFormSubmitHandler(() => {
     replaceFormToEvent();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  editEventFormComponent.setRemoveComponentHandler(() => {
+    remove(editEventFormComponent);
+    remove(eventComponent);
     document.removeEventListener('keydown', onEscKeyDown);
   });
 

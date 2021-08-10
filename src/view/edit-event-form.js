@@ -170,6 +170,7 @@ export default class EditEventForm extends AbstractView {
     this._callback = {};
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._switchToEventHandler = this._switchToEventHandler.bind(this);
+    this._removeComponentHandler = this._removeComponentHandler.bind(this);
   }
 
   getTemplate() {
@@ -186,6 +187,11 @@ export default class EditEventForm extends AbstractView {
     this._callback.formSubmit();
   }
 
+  _removeComponentHandler(evt) {
+    evt.preventDefault();
+    this._callback.removeComponent();
+  }
+
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
@@ -194,5 +200,10 @@ export default class EditEventForm extends AbstractView {
   setSwitchToEventHandler(callback) {
     this._callback.switchToEvent = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._switchToEventHandler);
+  }
+
+  setRemoveComponentHandler(callback) {
+    this._callback.removeComponent = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._removeComponentHandler);
   }
 }
