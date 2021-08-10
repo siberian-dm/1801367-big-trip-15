@@ -1,7 +1,7 @@
 import AbstractView from './abstract';
 import {POINT_TYPES} from '../const';
 import {CITIES, OFFER_TYPES} from '../mock/const';
-import {getHumanizeVisibleDateForForm} from '../utils';
+import {getHumanizeVisibleDateForForm} from '../utils/date-format';
 
 
 const createEventTypeListTemplate = (eventTypes, selectedType) => {

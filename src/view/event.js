@@ -1,5 +1,5 @@
 import AbstractView from './abstract';
-import {getHumanizeDate, getHumanizeVisibleDate, getHumanizeEventTime, getHumanizeEventDuration} from '../utils';
+import {getHumanizeDate, getHumanizeVisibleDate, getHumanizeEventTime, getHumanizeEventDuration} from '../utils/date-format';
 
 
 const createSelectedOffersTemplate = (offers) => {

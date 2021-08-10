@@ -1,5 +1,5 @@
 import AbstractView from './abstract';
-import {getHumanizeVisibleDateForInfo} from '../utils';
+import {getHumanizeVisibleDateForInfo} from '../utils/date-format';
 
 const TRIP_POINT_TITLE_COUNT = 3;
 

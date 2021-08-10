@@ -7,7 +7,7 @@ import {
   PHOTOS_URL
 } from './const';
 import {POINT_TYPES} from '../const';
-import {getRandomInteger} from '../utils';
+import {getRandomInteger} from './random';
 
 const DESCRIPTION_ROW_MAX = 5;
 const DESTINATION_PICTURES_MAX = 5;

@@ -7,7 +7,7 @@ import EditEventFormView from './view/edit-event-form';
 import EventView from './view/event';
 import NoEventView from './view/no-events';
 import {createTripPointObjects} from './mock/trip-point';
-import {render, RenderPosition} from './utils';
+import {render, replace, RenderPosition} from './utils/render';
 
 const TRIP_EVENT_COUNT = 15;
 
@@ -18,11 +18,11 @@ const renderEvent = (eventListContainer, event) => {
   const editEventFormComponent = new EditEventFormView(event);
 
   const replaceEventToForm = () => {
-    eventListContainer.replaceChild(editEventFormComponent.getElement(), eventComponent.getElement());
+    replace(editEventFormComponent, eventComponent);
   };
 
   const replaceFormToEvent = () => {
-    eventListContainer.replaceChild(eventComponent.getElement(), editEventFormComponent.getElement());
+    replace(eventComponent, editEventFormComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -48,7 +48,7 @@ const renderEvent = (eventListContainer, event) => {
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  render(eventListContainer, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  render(eventListContainer, eventComponent, RenderPosition.BEFOREEND);
 };
 
 
@@ -58,21 +58,21 @@ const siteMenuContainer = siteMainContainer.querySelector('.trip-controls__navig
 const filterListContainer = siteMainContainer.querySelector('.trip-controls__filters');
 const tripEventsContainer = siteMainContainer.querySelector('.trip-events');
 
-render(siteMenuContainer, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
-render(filterListContainer, new FilterListView().getElement(), RenderPosition.BEFOREEND);
+render(siteMenuContainer, new SiteMenuView(), RenderPosition.BEFOREEND);
+render(filterListContainer, new FilterListView(), RenderPosition.BEFOREEND);
 
 const eventListComponent = new EventListView();
 
-render(tripEventsContainer, eventListComponent.getElement(), RenderPosition.BEFOREEND);
+render(tripEventsContainer, eventListComponent, RenderPosition.BEFOREEND);
 
 if (!events.length){
-  render(eventListComponent.getElement(), new NoEventView().getElement(), RenderPosition.BEFOREEND);
+  render(eventListComponent, new NoEventView(), RenderPosition.BEFOREEND);
 }
 else {
-  render(tripInfoContainer, new TripInfoView(events).getElement(), RenderPosition.AFTERBEGIN);
-  render(tripEventsContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+  render(tripInfoContainer, new TripInfoView(events), RenderPosition.AFTERBEGIN);
+  render(tripEventsContainer, new SortView(), RenderPosition.AFTERBEGIN);
 
   for (let i = 0; i < events.length; i++) {
-    renderEvent(eventListComponent.getElement(), events[i]);
+    renderEvent(eventListComponent, events[i]);
   }
 }
