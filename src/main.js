@@ -17,35 +17,34 @@ const renderEvent = (eventListContainer, event) => {
   const eventComponent = new EventView(event);
   const editEventFormComponent = new EditEventFormView(event);
 
-  const replaceCardToForm = () => {
+  const replaceEventToForm = () => {
     eventListContainer.replaceChild(editEventFormComponent.getElement(), eventComponent.getElement());
   };
 
-  const replaceFormToCard = () => {
+  const replaceFormToEvent = () => {
     eventListContainer.replaceChild(eventComponent.getElement(), editEventFormComponent.getElement());
   };
 
   const onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      replaceFormToCard();
+      replaceFormToEvent();
       document.removeEventListener('keydown', onEscKeyDown);
     }
   };
 
-  eventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
-    replaceCardToForm();
+  eventComponent.setSwitchToFormHandler(() => {
+    replaceEventToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  editEventFormComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
-    replaceFormToCard();
+  editEventFormComponent.setSwitchToEventHandler(() => {
+    replaceFormToEvent();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  editEventFormComponent.getElement().querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    replaceFormToCard();
+  editEventFormComponent.setFormSubmitHandler(() => {
+    replaceFormToEvent();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
