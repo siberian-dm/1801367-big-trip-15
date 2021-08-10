@@ -1,6 +1,5 @@
+import AbstractView from './abstract';
 import {getHumanizeVisibleDateForInfo} from '../utils';
-
-import {createElement} from '../utils';
 
 const TRIP_POINT_TITLE_COUNT = 3;
 
@@ -40,25 +39,13 @@ const createTripInfoTemplate = (events) => {
 };
 
 
-export default class TripInfo {
+export default class TripInfo extends AbstractView {
   constructor(events) {
+    super();
     this._events = events;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripInfoTemplate(this._events);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

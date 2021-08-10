@@ -1,4 +1,5 @@
-import {createElement, getHumanizeDate, getHumanizeVisibleDate, getHumanizeEventTime, getHumanizeEventDuration} from '../utils';
+import AbstractView from './abstract';
+import {getHumanizeDate, getHumanizeVisibleDate, getHumanizeEventTime, getHumanizeEventDuration} from '../utils';
 
 
 const createSelectedOffersTemplate = (offers) => {
@@ -70,25 +71,13 @@ const createEventTemplate = (event) => {
 };
 
 
-export default class Event {
+export default class Event extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventTemplate(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

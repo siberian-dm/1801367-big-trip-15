@@ -1,6 +1,7 @@
+import AbstractView from './abstract';
 import {POINT_TYPES} from '../const';
 import {CITIES, OFFER_TYPES} from '../mock/const';
-import {createElement, getHumanizeVisibleDateForForm} from '../utils';
+import {getHumanizeVisibleDateForForm} from '../utils';
 
 
 const createEventTypeListTemplate = (eventTypes, selectedType) => {
@@ -162,25 +163,13 @@ const createEditEventFormTemplate = (event) => {
 };
 
 
-export default class EditEventForm {
+export default class EditEventForm extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEditEventFormTemplate(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
