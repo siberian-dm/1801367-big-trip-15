@@ -76,11 +76,7 @@ const createDestinationTemplate = (destination) => {
 const createEditTripPointFormTemplate = (tripPoint) => {
   const {id, basePrice, dateFrom, dateTo, destination, offers, type} = tripPoint;
 
-  const tripPointOffers = OFFER_TYPES.find((offer) => offer.type === type).offers;
-
-  const offersToRender = tripPointOffers.length
-    ? createOffersTemplate(tripPointOffers, offers, id)
-    : '';
+  const availableOffers = OFFER_TYPES.find((offer) => offer.type === type).offers;
 
   const destinationDescription = destination.description || destination.pictures.length
     ? createDestinationTemplate(destination)
@@ -139,7 +135,7 @@ const createEditTripPointFormTemplate = (tripPoint) => {
           </button>
         </header>
         <section class="event__details">
-          ${offersToRender}
+          ${availableOffers.length ? createOffersTemplate(availableOffers, offers, id) : ''}
           ${destinationDescription}
         </section>
       </form>
@@ -149,16 +145,16 @@ const createEditTripPointFormTemplate = (tripPoint) => {
 
 
 export default class EditTripPointForm extends AbstractView {
-  constructor(event) {
+  constructor(tripPoint) {
     super();
-    this._event = event;
+    this._tripPoint = tripPoint;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._switchToTripPointHandler = this._switchToTripPointHandler.bind(this);
     this._removeComponentHandler = this._removeComponentHandler.bind(this);
   }
 
   getTemplate() {
-    return createEditTripPointFormTemplate(this._event);
+    return createEditTripPointFormTemplate(this._tripPoint);
   }
 
   _formSubmitHandler(evt) {
