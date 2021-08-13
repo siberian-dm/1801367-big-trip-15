@@ -60,14 +60,14 @@ const createTripPointTemplate = (tripPoint) => {
 
 
 export default class TripPoint extends AbstractView {
-  constructor(tripPoints) {
+  constructor(tripPoint) {
     super();
-    this._tripPoints = tripPoints;
+    this._tripPoint = tripPoint;
     this._switchToFormHandler = this._switchToFormHandler.bind(this);
   }
 
   getTemplate() {
-    return createTripPointTemplate(this._tripPoints);
+    return createTripPointTemplate(this._tripPoint);
   }
 
   _switchToFormHandler(evt) {
