@@ -1,12 +1,6 @@
 import dayjs from 'dayjs';
-import {
-  DESCRIPTIONS,
-  OFFER_TYPES,
-  CITIES,
-  POINT_TYPE_BASE_PRICE,
-  PHOTOS_URL
-} from './const';
-import {POINT_TYPES} from '../const';
+import {DESCRIPTIONS, POINT_TYPE_BASE_PRICE, PHOTOS_URL} from './const';
+import {POINT_TYPES, OFFER_TYPES, CITIES} from '../const';
 import {getRandomInteger} from './random';
 
 const DESCRIPTION_ROW_MAX = 5;
