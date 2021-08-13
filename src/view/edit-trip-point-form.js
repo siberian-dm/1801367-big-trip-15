@@ -4,10 +4,10 @@ import {CITIES, OFFER_TYPES} from '../const';
 import {getHumanizeVisibleDateForForm} from '../utils/date-format';
 
 
-const createEventTypeListTemplate = (eventTypes, selectedType, id) => {
-  let eventTypeItems = '';
-  for (const eventType of eventTypes) {
-    eventTypeItems += (
+const createPointTypeListTemplate = (pointTypes, selectedType, id) => {
+  let pointTypeItems = '';
+  for (const eventType of pointTypes) {
+    pointTypeItems += (
       `<div class="event__type-item">
         <input id="event-type-${eventType}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${eventType === selectedType ? 'checked' : ''}>
         <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${id}">${eventType}</label>
@@ -15,7 +15,7 @@ const createEventTypeListTemplate = (eventTypes, selectedType, id) => {
     );
   }
 
-  return eventTypeItems;
+  return pointTypeItems;
 };
 
 
@@ -29,7 +29,7 @@ const createDestinationListTemplate = (cities) => {
 };
 
 
-const createEventAvailableOffersTemplate = (offers, selectedOffers, id) => {
+const createOffersTemplate = (offers, selectedOffers, id) => {
   const selectedOffersList = selectedOffers.map((offer) => offer.title);
 
   let offerItems = '';
@@ -59,7 +59,7 @@ const createEventAvailableOffersTemplate = (offers, selectedOffers, id) => {
 };
 
 
-const createEventDestinationTemplate = (destination) => {
+const createDestinationTemplate = (destination) => {
   const {description, pictures} = destination;
 
   let pictureItems = '';
@@ -83,17 +83,17 @@ const createEventDestinationTemplate = (destination) => {
 };
 
 
-const createEditEventFormTemplate = (event) => {
-  const {id, basePrice, dateFrom, dateTo, destination, offers, type} = event;
+const createEditTripPointFormTemplate = (tripPoint) => {
+  const {id, basePrice, dateFrom, dateTo, destination, offers, type} = tripPoint;
 
-  const eventTypeOffers = OFFER_TYPES.find((offer) => offer.type === type).offers;
+  const tripPointOffers = OFFER_TYPES.find((offer) => offer.type === type).offers;
 
-  const eventAvailableOffers = eventTypeOffers.length
-    ? createEventAvailableOffersTemplate(eventTypeOffers, offers, id)
+  const offersToRender = tripPointOffers.length
+    ? createOffersTemplate(tripPointOffers, offers, id)
     : '';
 
-  const eventDestinationDescription = destination.description || destination.pictures.length
-    ? createEventDestinationTemplate(destination)
+  const destinationDescription = destination.description || destination.pictures.length
+    ? createDestinationTemplate(destination)
     : '';
 
   return (
@@ -110,7 +110,7 @@ const createEditEventFormTemplate = (event) => {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${createEventTypeListTemplate(POINT_TYPES, type, id)}
+                ${createPointTypeListTemplate(POINT_TYPES, type, id)}
 
               </fieldset>
             </div>
@@ -149,8 +149,8 @@ const createEditEventFormTemplate = (event) => {
           </button>
         </header>
         <section class="event__details">
-          ${eventAvailableOffers}
-          ${eventDestinationDescription}
+          ${offersToRender}
+          ${destinationDescription}
         </section>
       </form>
     </li>`
@@ -158,17 +158,17 @@ const createEditEventFormTemplate = (event) => {
 };
 
 
-export default class EditEventForm extends AbstractView {
+export default class EditTripPointForm extends AbstractView {
   constructor(event) {
     super();
     this._event = event;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
-    this._switchToEventHandler = this._switchToEventHandler.bind(this);
+    this._switchToTripPointHandler = this._switchToTripPointHandler.bind(this);
     this._removeComponentHandler = this._removeComponentHandler.bind(this);
   }
 
   getTemplate() {
-    return createEditEventFormTemplate(this._event);
+    return createEditTripPointFormTemplate(this._event);
   }
 
   _formSubmitHandler(evt) {
@@ -176,9 +176,9 @@ export default class EditEventForm extends AbstractView {
     this._callback.formSubmit();
   }
 
-  _switchToEventHandler(evt) {
+  _switchToTripPointHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.switchToTripPoint();
   }
 
   _removeComponentHandler(evt) {
@@ -191,9 +191,9 @@ export default class EditEventForm extends AbstractView {
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 
-  setSwitchToEventHandler(callback) {
-    this._callback.switchToEvent = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._switchToEventHandler);
+  setSwitchToTripPointHandler(callback) {
+    this._callback.switchToTripPoint = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._switchToTripPointHandler);
   }
 
   setRemoveComponentHandler(callback) {

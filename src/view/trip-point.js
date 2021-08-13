@@ -18,7 +18,7 @@ const createSelectedOffersTemplate = (offers) => {
 };
 
 
-const createEventTemplate = (event) => {
+const createTripPointTemplate = (event) => {
   const {basePrice, dateFrom, dateTo, destination, offers, type, isFavorite} = event;
 
   const favoriteClassName = isFavorite
@@ -65,7 +65,7 @@ const createEventTemplate = (event) => {
 };
 
 
-export default class Event extends AbstractView {
+export default class TripPoint extends AbstractView {
   constructor(event) {
     super();
     this._event = event;
@@ -73,7 +73,7 @@ export default class Event extends AbstractView {
   }
 
   getTemplate() {
-    return createEventTemplate(this._event);
+    return createTripPointTemplate(this._event);
   }
 
   _switchToFormHandler(evt) {
