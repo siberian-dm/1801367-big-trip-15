@@ -75,7 +75,6 @@ export default class Event extends AbstractView {
   constructor(event) {
     super();
     this._event = event;
-    this._callback = {};
     this._switchToFormHandler = this._switchToFormHandler.bind(this);
   }
 

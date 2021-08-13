@@ -167,7 +167,6 @@ export default class EditEventForm extends AbstractView {
   constructor(event) {
     super();
     this._event = event;
-    this._callback = {};
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._switchToEventHandler = this._switchToEventHandler.bind(this);
     this._removeComponentHandler = this._removeComponentHandler.bind(this);
