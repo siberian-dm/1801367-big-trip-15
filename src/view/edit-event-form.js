@@ -4,13 +4,13 @@ import {CITIES, OFFER_TYPES} from '../const';
 import {getHumanizeVisibleDateForForm} from '../utils/date-format';
 
 
-const createEventTypeListTemplate = (eventTypes, selectedType) => {
+const createEventTypeListTemplate = (eventTypes, selectedType, id) => {
   let eventTypeItems = '';
   for (const eventType of eventTypes) {
     eventTypeItems += (
       `<div class="event__type-item">
-        <input id="event-type-${eventType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${eventType === selectedType ? 'checked' : ''}>
-        <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-1">${eventType}</label>
+        <input id="event-type-${eventType}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${eventType === selectedType ? 'checked' : ''}>
+        <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${id}">${eventType}</label>
       </div>`
     );
   }
@@ -29,7 +29,7 @@ const createDestinationListTemplate = (cities) => {
 };
 
 
-const createEventAvailableOffersTemplate = (offers, selectedOffers) => {
+const createEventAvailableOffersTemplate = (offers, selectedOffers, id) => {
   const selectedOffersList = selectedOffers.map((offer) => offer.title);
 
   let offerItems = '';
@@ -38,8 +38,8 @@ const createEventAvailableOffersTemplate = (offers, selectedOffers) => {
     const offerTitleFormated = offer.title.toLowerCase().replace(/ /g, '-');
     offerItems += (
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerTitleFormated}-1" type="checkbox" name="event-offer-${offerTitleFormated}" ${isChecked ? 'checked' : ''}>
-        <label class="event__offer-label" for="event-offer-${offerTitleFormated}-1">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerTitleFormated}-${id}" type="checkbox" name="event-offer-${offerTitleFormated}" ${isChecked ? 'checked' : ''}>
+        <label class="event__offer-label" for="event-offer-${offerTitleFormated}-${id}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
@@ -83,7 +83,7 @@ const createEventDestinationTemplate = (destination) => {
 };
 
 
-const createEditEventFormTemplate = (event) => {
+const createEditEventFormTemplate = (event, id) => {
   const eventBasePrice = event['base_price'];
   const eventDateFrom = event['date_form'];
   const eventDateTo = event['date_to'];
@@ -94,7 +94,7 @@ const createEditEventFormTemplate = (event) => {
   const eventTypeOffers = OFFER_TYPES.find((offer) => offer.type === eventType).offers;
 
   const eventAvailableOffers = eventTypeOffers.length
-    ? createEventAvailableOffersTemplate(eventTypeOffers, eventOffers)
+    ? createEventAvailableOffersTemplate(eventTypeOffers, eventOffers, id)
     : '';
 
   const eventDestinationDescription = eventDestination.description || eventDestination.pictures.length
@@ -106,45 +106,45 @@ const createEditEventFormTemplate = (event) => {
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
-            <label class="event__type  event__type-btn" for="event-type-toggle-1">
+            <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${eventType}.png" alt="Event type icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${createEventTypeListTemplate(POINT_TYPES, eventType)}
+                ${createEventTypeListTemplate(POINT_TYPES, eventType, id)}
 
               </fieldset>
             </div>
           </div>
 
           <div class="event__field-group  event__field-group--destination">
-            <label class="event__label  event__type-output" for="event-destination-1">
+            <label class="event__label  event__type-output" for="event-destination-${id}">
               ${eventType}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${eventDestination.name}" list="destination-list-1">
-            <datalist id="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${eventDestination.name}" list="destination-list-${id}">
+            <datalist id="destination-list-${id}">
               ${createDestinationListTemplate(CITIES)}
             </datalist>
           </div>
 
           <div class="event__field-group  event__field-group--time">
-            <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getHumanizeVisibleDateForForm(eventDateFrom)}">
+            <label class="visually-hidden" for="event-start-time-${id}">From</label>
+            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${getHumanizeVisibleDateForForm(eventDateFrom)}">
             &mdash;
-            <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getHumanizeVisibleDateForForm(eventDateTo)}">
+            <label class="visually-hidden" for="event-end-time-${id}">To</label>
+            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${getHumanizeVisibleDateForForm(eventDateTo)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
-            <label class="event__label" for="event-price-1">
+            <label class="event__label" for="event-price-${id}">
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${eventBasePrice}">
+            <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${eventBasePrice}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -164,16 +164,17 @@ const createEditEventFormTemplate = (event) => {
 
 
 export default class EditEventForm extends AbstractView {
-  constructor(event) {
+  constructor(event, id) {
     super();
     this._event = event;
+    this._id = id;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._switchToEventHandler = this._switchToEventHandler.bind(this);
     this._removeComponentHandler = this._removeComponentHandler.bind(this);
   }
 
   getTemplate() {
-    return createEditEventFormTemplate(this._event);
+    return createEditEventFormTemplate(this._event, this._id);
   }
 
   _formSubmitHandler(evt) {

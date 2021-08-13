@@ -13,9 +13,9 @@ const TRIP_EVENT_COUNT = 15;
 
 const events = createTripPointObjects(TRIP_EVENT_COUNT);
 
-const renderEvent = (eventListContainer, event) => {
+const renderEvent = (eventListContainer, event, eventId) => {
   const eventComponent = new EventView(event);
-  const editEventFormComponent = new EditEventFormView(event);
+  const editEventFormComponent = new EditEventFormView(event, eventId);
 
   const replaceEventToForm = () => {
     replace(editEventFormComponent, eventComponent);
@@ -79,6 +79,6 @@ else {
   render(tripEventsContainer, new SortView(), RenderPosition.AFTERBEGIN);
 
   for (let i = 0; i < events.length; i++) {
-    renderEvent(eventListComponent, events[i]);
+    renderEvent(eventListComponent, events[i], i);
   }
 }
