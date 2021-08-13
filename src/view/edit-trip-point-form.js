@@ -19,16 +19,6 @@ const createPointTypeListTemplate = (pointTypes, selectedType, id) => {
 };
 
 
-const createDestinationListTemplate = (cities) => {
-  let destinationItems = '';
-  for (const city of cities) {
-    destinationItems += `<option value="${city}"></option>`;
-  }
-
-  return destinationItems;
-};
-
-
 const createOffersTemplate = (offers, selectedOffers, id) => {
   const selectedOffersList = selectedOffers.map((offer) => offer.title);
 
@@ -122,7 +112,7 @@ const createEditTripPointFormTemplate = (tripPoint) => {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination.name}" list="destination-list-${id}">
             <datalist id="destination-list-${id}">
-              ${createDestinationListTemplate(CITIES)}
+              ${CITIES.map((city) => `<option value="${city}"></option>`).join('')}
             </datalist>
           </div>
 
