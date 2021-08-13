@@ -33,13 +33,14 @@ const generateDestination = () => (
 const generateTripPoint = (dateFrom, dateTo, index) => {
   const pointType = POINT_TYPES[getRandomInteger(0, POINT_TYPES.length - 1)];
   const pointOffers = OFFER_TYPES.find((offer) => offer.type === pointType).offers;
+
   return {
-    'base_price': POINT_TYPE_BASE_PRICE[pointType],
-    'date_from': dateFrom,
-    'date_to': dateTo,
+    'basePrice': POINT_TYPE_BASE_PRICE[pointType],
+    'dateFrom': dateFrom,
+    'dateTo': dateTo,
     'destination': generateDestination(),
     'id': index,
-    'is_favorite': !!getRandomInteger(),
+    'isFavorite': !!getRandomInteger(),
     'offers': new Array(getRandomInteger(0, pointOffers.length)).fill().map((_, offerIndex) => pointOffers[offerIndex]),
     'type': pointType,
   };

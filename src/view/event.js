@@ -19,38 +19,32 @@ const createSelectedOffersTemplate = (offers) => {
 
 
 const createEventTemplate = (event) => {
-  const eventBasePrice = event['base_price'];
-  const eventDateFrom = event['date_from'];
-  const eventDateTo = event['date_to'];
-  const eventDestination = event['destination'];
-  const eventOffers = event['offers'];
-  const eventType = event['type'];
-  const eventIsFavorite = event['is_favorite'];
+  const {basePrice, dateFrom, dateTo, destination, offers, type, isFavorite} = event;
 
-  const favoriteClassName = eventIsFavorite
+  const favoriteClassName = isFavorite
     ? 'event__favorite-btn event__favorite-btn--active'
     : 'event__favorite-btn';
 
-  const eventSelectedOffers = eventOffers.length ? createSelectedOffersTemplate(eventOffers) : '';
+  const eventSelectedOffers = offers.length ? createSelectedOffersTemplate(offers) : '';
 
   return (
     `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${getHumanizeDate(eventDateFrom)}">${getHumanizeVisibleDate(eventDateFrom)}</time>
+        <time class="event__date" datetime="${getHumanizeDate(dateFrom)}">${getHumanizeVisibleDate(dateFrom)}</time>
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/${eventType}.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${eventType} ${eventDestination.name}</h3>
+        <h3 class="event__title">${type} ${destination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${eventDateFrom}">${getHumanizeEventTime(eventDateFrom)}</time>
+            <time class="event__start-time" datetime="${dateFrom}">${getHumanizeEventTime(dateFrom)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${eventDateTo}">${getHumanizeEventTime(eventDateTo)}</time>
+            <time class="event__end-time" datetime="${dateTo}">${getHumanizeEventTime(dateTo)}</time>
           </p>
-          <p class="event__duration">${getHumanizeEventDuration(eventDateFrom, eventDateTo)}</p>
+          <p class="event__duration">${getHumanizeEventDuration(dateFrom, dateTo)}</p>
         </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${eventBasePrice}</span>
+          &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
