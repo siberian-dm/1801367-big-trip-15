@@ -1,24 +1,20 @@
-import {getHumanizeVisibleDateForInfo} from '../utils';
-
-import {createElement} from '../utils';
+import AbstractView from './abstract';
+import {getHumanizeVisibleDateForInfo} from '../utils/date-format';
 
 const TRIP_POINT_TITLE_COUNT = 3;
 
 
-const createTripInfoTemplate = (events) => {
-  const firstEvent = events[0];
-  const lastEvent = events[events.length - 1];
+const createTripInfoTemplate = (tripPoints) => {
+  const firstEvent = tripPoints[0];
+  const lastEvent = tripPoints[tripPoints.length - 1];
   const initialValue = 0;
 
-  const tripInfoTitle = events.length <= TRIP_POINT_TITLE_COUNT
-    ? events.map((event) => event.destination.name).join(' &mdash; ')
+  const tripInfoTitle = tripPoints.length <= TRIP_POINT_TITLE_COUNT
+    ? tripPoints.map((event) => event.destination.name).join(' &mdash; ')
     : `${firstEvent.destination.name} &mdash; ... &mdash; ${lastEvent.destination.name}`;
 
-  const tripInfoDates = getHumanizeVisibleDateForInfo(firstEvent['date_from'], lastEvent['date_to']);
-
-  const tripInfoCost = events.reduce((totalCost, event) => {
-    const basePrice = event['base_price'];
-    const offers = event['offers'];
+  const tripInfoCost = tripPoints.reduce((totalCost, tripPoint) => {
+    const {basePrice, offers} = tripPoint;
     const offerCost = offers.reduce((cost, offer) => cost + offer.price, initialValue);
 
     return totalCost + basePrice + offerCost;
@@ -29,7 +25,7 @@ const createTripInfoTemplate = (events) => {
       <div class="trip-info__main">
         <h1 class="trip-info__title">${tripInfoTitle}</h1>
 
-        <p class="trip-info__dates">${tripInfoDates}</p>
+        <p class="trip-info__dates">${getHumanizeVisibleDateForInfo(firstEvent.dateFrom, lastEvent.dateTo)}</p>
       </div>
 
       <p class="trip-info__cost">
@@ -40,25 +36,13 @@ const createTripInfoTemplate = (events) => {
 };
 
 
-export default class TripInfo {
-  constructor(events) {
-    this._events = events;
-    this._element = null;
+export default class TripInfo extends AbstractView {
+  constructor(tripPoints) {
+    super();
+    this._tripPoints = tripPoints;
   }
 
   getTemplate() {
-    return createTripInfoTemplate(this._events);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createTripInfoTemplate(this._tripPoints);
   }
 }

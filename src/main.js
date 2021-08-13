@@ -2,54 +2,59 @@ import TripInfoView from './view/trip-info';
 import SiteMenuView from './view/site-menu';
 import FilterListView from './view/filters';
 import SortView from './view/sort';
-import EventListView from './view/event-list';
-import EditEventFormView from './view/edit-event-form';
-import EventView from './view/event';
-import NoEventView from './view/no-events';
+import TripPointListView from './view/trip-point-list';
+import EditTripPointFormView from './view/edit-trip-point-form';
+import TripPointView from './view/trip-point';
+import NoTripPointsView from './view/no-trip-points';
 import {createTripPointObjects} from './mock/trip-point';
-import {render, RenderPosition} from './utils';
+import {render, replace, remove, RenderPosition} from './utils/render';
 
-const TRIP_EVENT_COUNT = 15;
+const TRIP_POINT_COUNT = 15;
 
-const events = createTripPointObjects(TRIP_EVENT_COUNT);
+const tripPoints = createTripPointObjects(TRIP_POINT_COUNT);
 
-const renderEvent = (eventListContainer, event) => {
-  const eventComponent = new EventView(event);
-  const editEventFormComponent = new EditEventFormView(event);
+const renderTripPoint = (tripPointListContainer, tripPoint) => {
+  const tripPointComponent = new TripPointView(tripPoint);
+  const editTripPointFormComponent = new EditTripPointFormView(tripPoint);
 
-  const replaceCardToForm = () => {
-    eventListContainer.replaceChild(editEventFormComponent.getElement(), eventComponent.getElement());
+  const replaceTripPointToForm = () => {
+    replace(editTripPointFormComponent, tripPointComponent);
   };
 
-  const replaceFormToCard = () => {
-    eventListContainer.replaceChild(eventComponent.getElement(), editEventFormComponent.getElement());
+  const replaceFormToTripPoint = () => {
+    replace(tripPointComponent, editTripPointFormComponent);
   };
 
   const onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      replaceFormToCard();
+      replaceFormToTripPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     }
   };
 
-  eventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
-    replaceCardToForm();
+  tripPointComponent.setSwitchToFormHandler(() => {
+    replaceTripPointToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  editEventFormComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
-    replaceFormToCard();
+  editTripPointFormComponent.setSwitchToTripPointHandler(() => {
+    replaceFormToTripPoint();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  editEventFormComponent.getElement().querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    replaceFormToCard();
+  editTripPointFormComponent.setFormSubmitHandler(() => {
+    replaceFormToTripPoint();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  render(eventListContainer, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  editTripPointFormComponent.setRemoveComponentHandler(() => {
+    remove(editTripPointFormComponent);
+    remove(tripPointComponent);
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  render(tripPointListContainer, tripPointComponent, RenderPosition.BEFOREEND);
 };
 
 
@@ -57,23 +62,23 @@ const siteMainContainer = document.querySelector('.page-body');
 const tripInfoContainer = siteMainContainer.querySelector('.trip-main');
 const siteMenuContainer = siteMainContainer.querySelector('.trip-controls__navigation');
 const filterListContainer = siteMainContainer.querySelector('.trip-controls__filters');
-const tripEventsContainer = siteMainContainer.querySelector('.trip-events');
+const tripPointsContainer = siteMainContainer.querySelector('.trip-events');
 
-render(siteMenuContainer, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
-render(filterListContainer, new FilterListView().getElement(), RenderPosition.BEFOREEND);
+render(siteMenuContainer, new SiteMenuView(), RenderPosition.BEFOREEND);
+render(filterListContainer, new FilterListView(), RenderPosition.BEFOREEND);
 
-const eventListComponent = new EventListView();
+const tripPointListComponent = new TripPointListView();
 
-render(tripEventsContainer, eventListComponent.getElement(), RenderPosition.BEFOREEND);
+render(tripPointsContainer, tripPointListComponent, RenderPosition.BEFOREEND);
 
-if (!events.length){
-  render(eventListComponent.getElement(), new NoEventView().getElement(), RenderPosition.BEFOREEND);
+if (!tripPoints.length) {
+  render(tripPointListComponent, new NoTripPointsView(), RenderPosition.BEFOREEND);
 }
 else {
-  render(tripInfoContainer, new TripInfoView(events).getElement(), RenderPosition.AFTERBEGIN);
-  render(tripEventsContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+  render(tripInfoContainer, new TripInfoView(tripPoints), RenderPosition.AFTERBEGIN);
+  render(tripPointsContainer, new SortView(), RenderPosition.AFTERBEGIN);
 
-  for (let i = 0; i < events.length; i++) {
-    renderEvent(eventListComponent.getElement(), events[i]);
+  for (let i = 0; i < tripPoints.length; i++) {
+    renderTripPoint(tripPointListComponent, tripPoints[i]);
   }
 }
