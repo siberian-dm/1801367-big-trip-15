@@ -83,7 +83,8 @@ const createEventDestinationTemplate = (destination) => {
 };
 
 
-const createEditEventFormTemplate = (event, id) => {
+const createEditEventFormTemplate = (event) => {
+  const id = event['id'];
   const eventBasePrice = event['base_price'];
   const eventDateFrom = event['date_form'];
   const eventDateTo = event['date_to'];
@@ -164,17 +165,16 @@ const createEditEventFormTemplate = (event, id) => {
 
 
 export default class EditEventForm extends AbstractView {
-  constructor(event, id) {
+  constructor(event) {
     super();
     this._event = event;
-    this._id = id;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._switchToEventHandler = this._switchToEventHandler.bind(this);
     this._removeComponentHandler = this._removeComponentHandler.bind(this);
   }
 
   getTemplate() {
-    return createEditEventFormTemplate(this._event, this._id);
+    return createEditEventFormTemplate(this._event);
   }
 
   _formSubmitHandler(evt) {

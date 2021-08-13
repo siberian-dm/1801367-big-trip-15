@@ -30,7 +30,7 @@ const generateDestination = () => (
 );
 
 
-const generateTripPoint = (dateFrom, dateTo) => {
+const generateTripPoint = (dateFrom, dateTo, index) => {
   const pointType = POINT_TYPES[getRandomInteger(0, POINT_TYPES.length - 1)];
   const pointOffers = OFFER_TYPES.find((offer) => offer.type === pointType).offers;
   return {
@@ -38,9 +38,9 @@ const generateTripPoint = (dateFrom, dateTo) => {
     'date_from': dateFrom,
     'date_to': dateTo,
     'destination': generateDestination(),
-    'id': '0',
+    'id': index,
     'is_favorite': !!getRandomInteger(),
-    'offers': new Array(getRandomInteger(0, pointOffers.length)).fill().map((_, index) => pointOffers[index]),
+    'offers': new Array(getRandomInteger(0, pointOffers.length)).fill().map((_, offerIndex) => pointOffers[offerIndex]),
     'type': pointType,
   };
 };
@@ -57,7 +57,7 @@ const createTripPointObjects = (objectsNumber) => {
       dateFrom = dateTo.add((dateTo - dateFrom) / oneMinute + getRandomInteger(20, 240), 'minute');
       dateTo = dateFrom.add(getRandomInteger(20, 720), 'minute');
     }
-    tripPointList.push(generateTripPoint(dateFrom, dateTo));
+    tripPointList.push(generateTripPoint(dateFrom, dateTo, i));
   }
 
   return tripPointList;
