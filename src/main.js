@@ -2,7 +2,7 @@ import TripInfoView from './view/trip-info';
 import SiteMenuView from './view/site-menu';
 import FilterListView from './view/filters';
 import SortView from './view/sort';
-import TripPointListView from './view/trip-point-list';
+import TripPointsView from './view/trip-points';
 import EditTripPointFormView from './view/edit-trip-point-form';
 import TripPointView from './view/trip-point';
 import NoTripPointsView from './view/no-trip-points';
@@ -13,9 +13,9 @@ const TRIP_POINT_COUNT = 15;
 
 const tripPoints = createTripPointObjects(TRIP_POINT_COUNT);
 
-const renderTripPoint = (tripPointListContainer, tripPoint) => {
-  const tripPointComponent = new TripPointView(tripPoint);
-  const editTripPointFormComponent = new EditTripPointFormView(tripPoint);
+const renderTripPoint = (container, point) => {
+  const tripPointComponent = new TripPointView(point);
+  const editTripPointFormComponent = new EditTripPointFormView(point);
 
   const replaceTripPointToForm = () => {
     replace(editTripPointFormComponent, tripPointComponent);
@@ -54,31 +54,29 @@ const renderTripPoint = (tripPointListContainer, tripPoint) => {
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  render(tripPointListContainer, tripPointComponent, RenderPosition.BEFOREEND);
+  render(container, tripPointComponent);
 };
 
 
 const siteMainContainer = document.querySelector('.page-body');
 const tripInfoContainer = siteMainContainer.querySelector('.trip-main');
 const siteMenuContainer = siteMainContainer.querySelector('.trip-controls__navigation');
-const filterListContainer = siteMainContainer.querySelector('.trip-controls__filters');
+const filtersContainer = siteMainContainer.querySelector('.trip-controls__filters');
 const tripPointsContainer = siteMainContainer.querySelector('.trip-events');
 
-render(siteMenuContainer, new SiteMenuView(), RenderPosition.BEFOREEND);
-render(filterListContainer, new FilterListView(), RenderPosition.BEFOREEND);
+render(siteMenuContainer, new SiteMenuView());
+render(filtersContainer, new FilterListView());
 
-const tripPointListComponent = new TripPointListView();
+const tripPointsComponent = new TripPointsView();
 
-render(tripPointsContainer, tripPointListComponent, RenderPosition.BEFOREEND);
+render(tripPointsContainer, tripPointsComponent);
 
 if (!tripPoints.length) {
-  render(tripPointListComponent, new NoTripPointsView(), RenderPosition.BEFOREEND);
+  render(tripPointsComponent, new NoTripPointsView());
 }
 else {
   render(tripInfoContainer, new TripInfoView(tripPoints), RenderPosition.AFTERBEGIN);
   render(tripPointsContainer, new SortView(), RenderPosition.AFTERBEGIN);
 
-  for (let i = 0; i < tripPoints.length; i++) {
-    renderTripPoint(tripPointListComponent, tripPoints[i]);
-  }
+  tripPoints.forEach((point) => renderTripPoint(tripPointsComponent, point));
 }
