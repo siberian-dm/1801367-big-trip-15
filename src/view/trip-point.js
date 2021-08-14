@@ -2,20 +2,13 @@ import AbstractView from './abstract';
 import {getHumanizeDate, getHumanizeVisibleDate, getHumanizeEventTime, getHumanizeEventDuration} from '../utils/date-format';
 
 
-const createSelectedOffersTemplate = (offers) => {
-  let offerItems = '';
-  for (const offer of offers) {
-    offerItems += (
-      `<li class="event__offer">
+const createSelectedOffersTemplate = (offers) =>
+  offers.map((offer) => (
+    `<li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
-      </li>`
-    );
-  }
-
-  return offerItems;
-};
+    </li>`)).join('');
 
 
 const createTripPointTemplate = (tripPoint) => {
