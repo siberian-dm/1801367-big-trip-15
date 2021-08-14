@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import {DESCRIPTIONS, POINT_TYPE_BASE_PRICE, PHOTOS_URL} from './const';
-import {POINT_TYPES, OFFER_TYPES, CITIES} from '../const';
+import {OFFER_TYPES, CITIES} from '../const';
 import {getRandomInteger} from './random';
 
 const DESCRIPTION_ROW_MAX = 5;
@@ -15,34 +15,35 @@ const generateDescription = () => new Array(getRandomInteger(DESCRIPTION_ROW_MAX
 
 const generatePicture = () => (
   {
-    'src': `${PHOTOS_URL + getRandomInteger(DESTINATION_PICTURES_MAX)}`,
-    'description': generateDescription(),
+    src: PHOTOS_URL + getRandomInteger(DESTINATION_PICTURES_MAX),
+    description: generateDescription(),
   }
 );
 
 
 const generateDestination = () => (
   {
-    'description': getRandomInteger() ? generateDescription() : '',
-    'name': CITIES[getRandomInteger(0, CITIES.length - 1)],
-    'pictures': new Array(getRandomInteger(0, DESTINATION_PICTURES_MAX)).fill().map(generatePicture),
+    description: getRandomInteger() ? generateDescription() : '',
+    name: CITIES[getRandomInteger(0, CITIES.length - 1)],
+    pictures: new Array(getRandomInteger(0, DESTINATION_PICTURES_MAX)).fill().map(generatePicture),
   }
 );
 
 
 const generateTripPoint = (dateFrom, dateTo, index) => {
-  const pointType = POINT_TYPES[getRandomInteger(0, POINT_TYPES.length - 1)];
+  const pointTypes = OFFER_TYPES.map((offer) => offer.type);
+  const pointType = pointTypes[getRandomInteger(0, pointTypes.length - 1)];
   const pointOffers = OFFER_TYPES.find((offer) => offer.type === pointType).offers;
 
   return {
-    'basePrice': POINT_TYPE_BASE_PRICE[pointType],
-    'dateFrom': dateFrom,
-    'dateTo': dateTo,
-    'destination': generateDestination(),
-    'id': index,
-    'isFavorite': !!getRandomInteger(),
-    'offers': new Array(getRandomInteger(0, pointOffers.length)).fill().map((_, offerIndex) => pointOffers[offerIndex]),
-    'type': pointType,
+    basePrice: POINT_TYPE_BASE_PRICE[pointType],
+    dateFrom: dateFrom,
+    dateTo: dateTo,
+    destination: generateDestination(),
+    id: index,
+    isFavorite: !!getRandomInteger(),
+    offers: new Array(getRandomInteger(0, pointOffers.length)).fill().map((_, offerIndex) => pointOffers[offerIndex]),
+    type: pointType,
   };
 };
 
