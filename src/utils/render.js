@@ -6,7 +6,7 @@ export const RenderPosition = {
 };
 
 
-export const render = (container, child, place) => {
+export const render = (container, child, place = RenderPosition.BEFOREEND) => {
   if (container instanceof Abstract){
     container = container.getElement();
   }
