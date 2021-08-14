@@ -5,16 +5,16 @@ const TRIP_POINT_TITLE_COUNT = 3;
 
 
 const createTripInfoTemplate = (tripPoints) => {
-  const firstEvent = tripPoints[0];
-  const lastEvent = tripPoints[tripPoints.length - 1];
+  const firstPoint = tripPoints[0];
+  const lastPoint = tripPoints[tripPoints.length - 1];
   const initialValue = 0;
 
   const tripInfoTitle = tripPoints.length <= TRIP_POINT_TITLE_COUNT
-    ? tripPoints.map((event) => event.destination.name).join(' &mdash; ')
-    : `${firstEvent.destination.name} &mdash; ... &mdash; ${lastEvent.destination.name}`;
+    ? tripPoints.map((point) => point.destination.name).join(' &mdash; ')
+    : `${firstPoint.destination.name} &mdash; ... &mdash; ${lastPoint.destination.name}`;
 
-  const tripInfoCost = tripPoints.reduce((totalCost, tripPoint) => {
-    const {basePrice, offers} = tripPoint;
+  const tripInfoCost = tripPoints.reduce((totalCost, point) => {
+    const {basePrice, offers} = point;
     const offerCost = offers.reduce((cost, offer) => cost + offer.price, initialValue);
 
     return totalCost + basePrice + offerCost;
@@ -25,7 +25,7 @@ const createTripInfoTemplate = (tripPoints) => {
       <div class="trip-info__main">
         <h1 class="trip-info__title">${tripInfoTitle}</h1>
 
-        <p class="trip-info__dates">${getHumanizeVisibleDateForInfo(firstEvent.dateFrom, lastEvent.dateTo)}</p>
+        <p class="trip-info__dates">${getHumanizeVisibleDateForInfo(firstPoint.dateFrom, lastPoint.dateTo)}</p>
       </div>
 
       <p class="trip-info__cost">
