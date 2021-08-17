@@ -33,12 +33,18 @@ export default class Trip {
     this._renderTrip();
   }
 
-  _renderSort() {
+  _renderInfo() {
+    this._tripInfoComponent = new InfoView(this._points);
 
+    render(this._infoContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
   }
 
-  _renderNoPonts() {
+  _renderSort() {
+    render(this._pointsContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
+  }
 
+  _renderNoPoints() {
+    render(this._pointsComponent, this._noPointsComponent);
   }
 
   _renderPoint(container, point) {
@@ -49,13 +55,11 @@ export default class Trip {
 
   _renderTrip() {
     if (!this._points.length) {
-      render(this._pointsComponent, this._noPointsComponent);
+      this._renderNoPoints();
     }
     else {
-      this._tripInfoComponent = new InfoView(this._points);
-
-      render(this._infoContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
-      render(this._pointsContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
+      this._renderInfo();
+      this._renderSort();
 
       this._points.forEach((point) => this._renderPoint(this._pointsComponent, point));
     }
