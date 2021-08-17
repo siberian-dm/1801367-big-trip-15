@@ -35,11 +35,11 @@ export default class Trip {
 
   }
 
-  _renderNoTripPonts() {
+  _renderNoPonts() {
 
   }
 
-  _renderTripPoint(container, point) {
+  _renderPoint(container, point) {
     const pointComponent = new PointView(point);
     const editPointFormComponent = new EditPointFormView(point);
 
@@ -93,7 +93,7 @@ export default class Trip {
       render(this._infoContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
       render(this._pointsContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
 
-      this._points.forEach((point) => this._renderTripPoint(this._pointsComponent, point));
+      this._points.forEach((point) => this._renderPoint(this._pointsComponent, point));
     }
   }
 }
