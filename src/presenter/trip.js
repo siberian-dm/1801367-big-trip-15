@@ -1,5 +1,5 @@
 import InfoView from '../view/trip-info';
-import MenuView from '../view/site-menu';
+import MenuView from '../view/menu';
 import FiltersView from '../view/filters';
 import SortView from '../view/sort';
 import PointsView from '../view/trip-points';
