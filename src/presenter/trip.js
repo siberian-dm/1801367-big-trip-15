@@ -64,7 +64,7 @@ export default class Trip {
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    editPointFormComponent.setSwitchToTripPointHandler(() => {
+    editPointFormComponent.setSwitchToPointHandler(() => {
       replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
