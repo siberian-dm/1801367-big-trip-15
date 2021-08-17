@@ -54,8 +54,8 @@ const createDestinationTemplate = (destination) => (
 );
 
 
-const createEditTripPointFormTemplate = (tripPoint) => {
-  const {id, basePrice, dateFrom, dateTo, destination, offers, type} = tripPoint;
+const createEditPointFormTemplate = (point) => {
+  const {id, basePrice, dateFrom, dateTo, destination, offers, type} = point;
   const {description, pictures} = destination;
 
   const pointTypes = OFFER_TYPES.map((offer) => offer.type);
@@ -124,17 +124,17 @@ const createEditTripPointFormTemplate = (tripPoint) => {
 };
 
 
-export default class EditTripPointForm extends AbstractView {
-  constructor(tripPoint) {
+export default class EditPointForm extends AbstractView {
+  constructor(point) {
     super();
-    this._tripPoint = tripPoint;
+    this._point = point;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
-    this._switchToTripPointHandler = this._switchToTripPointHandler.bind(this);
+    this._switchToPointHandler = this._switchToPointHandler.bind(this);
     this._removeComponentHandler = this._removeComponentHandler.bind(this);
   }
 
   getTemplate() {
-    return createEditTripPointFormTemplate(this._tripPoint);
+    return createEditPointFormTemplate(this._point);
   }
 
   _formSubmitHandler(evt) {
@@ -142,9 +142,9 @@ export default class EditTripPointForm extends AbstractView {
     this._callback.formSubmit();
   }
 
-  _switchToTripPointHandler(evt) {
+  _switchToPointHandler(evt) {
     evt.preventDefault();
-    this._callback.switchToTripPoint();
+    this._callback.switchToPoint();
   }
 
   _removeComponentHandler(evt) {
@@ -157,9 +157,9 @@ export default class EditTripPointForm extends AbstractView {
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 
-  setSwitchToTripPointHandler(callback) {
-    this._callback.switchToTripPoint = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._switchToTripPointHandler);
+  setSwitchToPointHandler(callback) {
+    this._callback.switchToPoint = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._switchToPointHandler);
   }
 
   setRemoveComponentHandler(callback) {
