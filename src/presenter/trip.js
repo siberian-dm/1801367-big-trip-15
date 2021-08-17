@@ -1,33 +1,33 @@
-import TripInfoView from '../view/trip-info';
-import SiteMenuView from '../view/site-menu';
+import InfoView from '../view/trip-info';
+import MenuView from '../view/site-menu';
 import FiltersView from '../view/filters';
 import SortView from '../view/sort';
-import TripPointsView from '../view/trip-points';
-import EditTripPointFormView from '../view/edit-trip-point-form';
-import TripPointView from '../view/trip-point';
-import NoTripPointsView from '../view/no-trip-points';
+import PointsView from '../view/trip-points';
+import EditPointFormView from '../view/edit-trip-point-form';
+import PointView from '../view/trip-point';
+import NoPointsView from '../view/no-trip-points';
 import {render, replace, remove, RenderPosition} from '../utils/render';
 
 export default class Trip {
-  constructor(tripInfoContainer, siteMenuContainer, filtersContainer, tripPointsContainer) {
-    this._tripInfoContainer = tripInfoContainer;
-    this._siteMenuContainer = siteMenuContainer;
+  constructor(infoContainer, menuContainer, filtersContainer, pointsContainer) {
+    this._infoContainer = infoContainer;
+    this._menuContainer = menuContainer;
     this._filtersContainer = filtersContainer;
-    this._tripPointsContainer = tripPointsContainer;
+    this._pointsContainer = pointsContainer;
 
-    this._siteMenuComponent = new SiteMenuView();
+    this._menuComponent = new MenuView();
     this._filtersComponent = new FiltersView();
     this._sortComponent = new SortView();
-    this._tripPointsComponent = new TripPointsView();
-    this._noTripPointsComponent = new NoTripPointsView();
+    this._pointsComponent = new PointsView();
+    this._noPointsComponent = new NoPointsView();
   }
 
-  init(tripPoints) {
-    this._tripPoints = tripPoints.slice();
+  init(points) {
+    this._points = points.slice();
 
-    render(this._siteMenuContainer, this._siteMenuComponent);
+    render(this._menuContainer, this._menuComponent);
     render(this._filtersContainer, this._filtersComponent);
-    render(this._tripPointsContainer, this._tripPointsComponent);
+    render(this._pointsContainer, this._pointsComponent);
     this._renderTrip();
   }
 
@@ -40,60 +40,60 @@ export default class Trip {
   }
 
   _renderTripPoint(container, point) {
-    const tripPointComponent = new TripPointView(point);
-    const editTripPointFormComponent = new EditTripPointFormView(point);
+    const pointComponent = new PointView(point);
+    const editPointFormComponent = new EditPointFormView(point);
 
-    const replaceTripPointToForm = () => {
-      replace(editTripPointFormComponent, tripPointComponent);
+    const replacePointToForm = () => {
+      replace(editPointFormComponent, pointComponent);
     };
 
-    const replaceFormToTripPoint = () => {
-      replace(tripPointComponent, editTripPointFormComponent);
+    const replaceFormToPoint = () => {
+      replace(pointComponent, editPointFormComponent);
     };
 
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        replaceFormToTripPoint();
+        replaceFormToPoint();
         document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
-    tripPointComponent.setSwitchToFormHandler(() => {
-      replaceTripPointToForm();
+    pointComponent.setSwitchToFormHandler(() => {
+      replacePointToForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    editTripPointFormComponent.setSwitchToTripPointHandler(() => {
-      replaceFormToTripPoint();
+    editPointFormComponent.setSwitchToTripPointHandler(() => {
+      replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    editTripPointFormComponent.setFormSubmitHandler(() => {
-      replaceFormToTripPoint();
+    editPointFormComponent.setFormSubmitHandler(() => {
+      replaceFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    editTripPointFormComponent.setRemoveComponentHandler(() => {
-      remove(editTripPointFormComponent);
-      remove(tripPointComponent);
+    editPointFormComponent.setRemoveComponentHandler(() => {
+      remove(editPointFormComponent);
+      remove(pointComponent);
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    render(container, tripPointComponent);
+    render(container, pointComponent);
   }
 
   _renderTrip() {
-    if (!this._tripPoints.length) {
-      render(this._tripPointsComponent, this._noTripPointsComponent);
+    if (!this._points.length) {
+      render(this._pointsComponent, this._noPointsComponent);
     }
     else {
-      this._tripInfoComponent = new TripInfoView(this._tripPoints);
+      this._tripInfoComponent = new InfoView(this._points);
 
-      render(this._tripInfoContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
-      render(this._tripPointsContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
+      render(this._infoContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
+      render(this._pointsContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
 
-      this._tripPoints.forEach((point) => this._renderTripPoint(this._tripPointsComponent, point));
+      this._points.forEach((point) => this._renderTripPoint(this._pointsComponent, point));
     }
   }
 }
