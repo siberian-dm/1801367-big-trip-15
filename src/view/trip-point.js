@@ -11,8 +11,8 @@ const createSelectedOffersTemplate = (offers) =>
     </li>`)).join('');
 
 
-const createTripPointTemplate = (tripPoint) => {
-  const {basePrice, dateFrom, dateTo, destination, offers, type, isFavorite} = tripPoint;
+const createPointTemplate = (point) => {
+  const {basePrice, dateFrom, dateTo, destination, offers, type, isFavorite} = point;
 
   return (
     `<li class="trip-events__item">
@@ -52,15 +52,15 @@ const createTripPointTemplate = (tripPoint) => {
 };
 
 
-export default class TripPoint extends AbstractView {
-  constructor(tripPoint) {
+export default class Point extends AbstractView {
+  constructor(point) {
     super();
-    this._tripPoint = tripPoint;
+    this._point = point;
     this._switchToFormHandler = this._switchToFormHandler.bind(this);
   }
 
   getTemplate() {
-    return createTripPointTemplate(this._tripPoint);
+    return createPointTemplate(this._point);
   }
 
   _switchToFormHandler(evt) {
