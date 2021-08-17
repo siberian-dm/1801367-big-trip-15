@@ -1,12 +1,14 @@
+import PointPresenter from './point';
+
 import InfoView from '../view/trip-info';
 import MenuView from '../view/menu';
 import FiltersView from '../view/filters';
 import SortView from '../view/sort';
 import PointsView from '../view/trip-points';
-import EditPointFormView from '../view/edit-trip-point-form';
-import PointView from '../view/trip-point';
 import NoPointsView from '../view/no-trip-points';
-import {render, replace, remove, RenderPosition} from '../utils/render';
+
+import {render, RenderPosition} from '../utils/render';
+
 
 export default class Trip {
   constructor(infoContainer, menuContainer, filtersContainer, pointsContainer) {
@@ -40,47 +42,9 @@ export default class Trip {
   }
 
   _renderPoint(container, point) {
-    const pointComponent = new PointView(point);
-    const editPointFormComponent = new EditPointFormView(point);
+    this._pointComponent = new PointPresenter(container);
 
-    const replacePointToForm = () => {
-      replace(editPointFormComponent, pointComponent);
-    };
-
-    const replaceFormToPoint = () => {
-      replace(pointComponent, editPointFormComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-    pointComponent.setSwitchToFormHandler(() => {
-      replacePointToForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    editPointFormComponent.setSwitchToPointHandler(() => {
-      replaceFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    editPointFormComponent.setFormSubmitHandler(() => {
-      replaceFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    editPointFormComponent.setRemoveComponentHandler(() => {
-      remove(editPointFormComponent);
-      remove(pointComponent);
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    render(container, pointComponent);
+    this._pointComponent.init(point);
   }
 
   _renderTrip() {
