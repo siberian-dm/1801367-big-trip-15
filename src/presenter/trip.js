@@ -16,6 +16,7 @@ export default class Trip {
     this._menuContainer = menuContainer;
     this._filtersContainer = filtersContainer;
     this._pointsContainer = pointsContainer;
+    this._pointPresenter = new Map();
 
     this._menuComponent = new MenuView();
     this._filtersComponent = new FiltersView();
@@ -47,10 +48,16 @@ export default class Trip {
     render(this._pointsComponent, this._noPointsComponent);
   }
 
-  _renderPoint(container, point) {
-    this._pointComponent = new PointPresenter(container);
+  _renderPoint(point) {
+    const pointPresenter = new PointPresenter(this._pointsComponent);
 
-    this._pointComponent.init(point);
+    pointPresenter.init(point);
+    this._pointPresenter.set(point.id, pointPresenter);
+  }
+
+  _clearPoints() {
+    this._pointPresenter.forEach((presenter) => presenter.destroy());
+    this._pointPresenter.clear();
   }
 
   _renderTrip() {
@@ -61,7 +68,7 @@ export default class Trip {
       this._renderInfo();
       this._renderSort();
 
-      this._points.forEach((point) => this._renderPoint(this._pointsComponent, point));
+      this._points.forEach((point) => this._renderPoint(point));
     }
   }
 }

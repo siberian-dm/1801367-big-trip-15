@@ -46,6 +46,10 @@ export default class Point {
     remove(prevEditPointFormComponent);
   }
 
+  destroy() {
+    this._handleRemoveComponent();
+  }
+
   _replacePointToForm() {
     replace(this._editPointFormComponent, this._pointComponent);
   }
