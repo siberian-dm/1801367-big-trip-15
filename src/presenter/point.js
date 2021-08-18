@@ -71,34 +71,32 @@ export default class Point {
     replace(this._editPointFormComponent, this._pointComponent);
     this._changeMode();
     this._mode = Mode.EDITING;
+    document.addEventListener('keydown', this._escKeyDownHandler);
   }
 
   _replaceFormToPoint() {
     replace(this._pointComponent, this._editPointFormComponent);
     this._mode = Mode.DEFAULT;
+    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this._replaceFormToPoint();
-      document.removeEventListener('keydown', this._escKeyDownHandler);
     }
   }
 
   _handleSwtichToForm() {
     this._replacePointToForm();
-    document.addEventListener('keydown', this._escKeyDownHandler);
   }
 
   _handleSwitchToPoint() {
     this._replaceFormToPoint();
-    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
   _handleFormSubmit() {
     this._replaceFormToPoint();
-    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
   _handleRemoveComponent() {
