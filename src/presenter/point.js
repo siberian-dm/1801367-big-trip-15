@@ -7,6 +7,9 @@ export default class Point {
   constructor(container) {
     this._container = container;
 
+    this._pointComponent = null;
+    this._editPointFormComponent = null;
+
     this._handleSwtichToForm = this._handleSwtichToForm.bind(this);
     this._handleSwitchToPoint = this._handleSwitchToPoint.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
@@ -15,6 +18,9 @@ export default class Point {
   }
 
   init(point) {
+    const prevPointComponent = this._pointComponent;
+    const prevEditPointFormComponent = this._editPointFormComponent;
+
     this._pointComponent = new PointView(point);
     this._editPointFormComponent = new EditPointFormView(point);
 
@@ -23,7 +29,21 @@ export default class Point {
     this._editPointFormComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editPointFormComponent.setRemoveComponentHandler(this._handleRemoveComponent);
 
-    render(this._container, this._pointComponent);
+    if (prevPointComponent === null || prevEditPointFormComponent === null) {
+      render(this._container, this._pointComponent);
+      return;
+    }
+
+    if (this._container.getElement().contains(prevPointComponent.getElement())) {
+      replace(this._pointComponent, prevPointComponent);
+    }
+
+    if (this._container.getElement().contains(prevEditPointFormComponent.getElement())) {
+      replace(this._editPointFormComponent, prevEditPointFormComponent);
+    }
+
+    remove(prevPointComponent);
+    remove(prevEditPointFormComponent);
   }
 
   _replacePointToForm() {
@@ -60,6 +80,5 @@ export default class Point {
   _handleRemoveComponent() {
     remove(this._editPointFormComponent);
     remove(this._pointComponent);
-    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 }
