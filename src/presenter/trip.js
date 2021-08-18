@@ -8,6 +8,7 @@ import PointsView from '../view/trip-points';
 import NoPointsView from '../view/no-trip-points';
 
 import {render, RenderPosition} from '../utils/render';
+import {updateItem} from '../utils/common';
 
 
 export default class Trip {
@@ -23,6 +24,8 @@ export default class Trip {
     this._sortComponent = new SortView();
     this._pointsComponent = new PointsView();
     this._noPointsComponent = new NoPointsView();
+
+    this._handlePointChange = this._handlePointChange.bind(this);
   }
 
   init(points) {
@@ -32,6 +35,11 @@ export default class Trip {
     render(this._filtersContainer, this._filtersComponent);
     render(this._pointsContainer, this._pointsComponent);
     this._renderTrip();
+  }
+
+  _handlePointChange(updatedPoint) {
+    this._points = updateItem(this._points, updatedPoint);
+    this._taskPresenter.get(updatedPoint.id).init(updatedPoint);
   }
 
   _renderInfo() {
