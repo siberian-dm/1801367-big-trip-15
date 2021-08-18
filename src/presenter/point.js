@@ -2,14 +2,20 @@ import PointView from '../view/trip-point';
 import EditPointFormView from '../view/edit-trip-point-form';
 import {replace, remove, render} from '../utils/render';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
 
 export default class Point {
-  constructor(container, changeData) {
+  constructor(container, changeData, changeMode) {
     this._container = container;
     this._changeData = changeData;
+    this._changeMode = changeMode;
 
     this._pointComponent = null;
     this._editPointFormComponent = null;
+    this._mode = Mode.DEFAULT;
 
     this._handleSwtichToForm = this._handleSwtichToForm.bind(this);
     this._handleSwitchToPoint = this._handleSwitchToPoint.bind(this);
@@ -39,11 +45,11 @@ export default class Point {
       return;
     }
 
-    if (this._container.getElement().contains(prevPointComponent.getElement())) {
+    if (this._mode === Mode.DEFAULT) {
       replace(this._pointComponent, prevPointComponent);
     }
 
-    if (this._container.getElement().contains(prevEditPointFormComponent.getElement())) {
+    if (this._mode === Mode.EDITING) {
       replace(this._editPointFormComponent, prevEditPointFormComponent);
     }
 
@@ -55,12 +61,21 @@ export default class Point {
     this._handleRemoveComponent();
   }
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceFormToPoint();
+    }
+  }
+
   _replacePointToForm() {
     replace(this._editPointFormComponent, this._pointComponent);
+    this._changeMode();
+    this._mode = Mode.EDITING;
   }
 
   _replaceFormToPoint() {
     replace(this._pointComponent, this._editPointFormComponent);
+    this._mode = Mode.DEFAULT;
   }
 
   _escKeyDownHandler(evt) {
