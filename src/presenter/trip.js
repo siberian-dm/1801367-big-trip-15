@@ -39,7 +39,7 @@ export default class Trip {
 
   _handlePointChange(updatedPoint) {
     this._points = updateItem(this._points, updatedPoint);
-    this._taskPresenter.get(updatedPoint.id).init(updatedPoint);
+    this._pointPresenter.get(updatedPoint.id).init(updatedPoint);
   }
 
   _renderInfo() {
@@ -57,7 +57,7 @@ export default class Trip {
   }
 
   _renderPoint(point) {
-    const pointPresenter = new PointPresenter(this._pointsComponent);
+    const pointPresenter = new PointPresenter(this._pointsComponent, this._handlePointChange);
 
     pointPresenter.init(point);
     this._pointPresenter.set(point.id, pointPresenter);
