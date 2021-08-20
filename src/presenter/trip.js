@@ -20,7 +20,7 @@ export default class Trip {
     this._filtersContainer = filtersContainer;
     this._pointsContainer = pointsContainer;
     this._pointPresenter = new Map();
-    this._currentSortType = SortType.DAY;
+    // this._currentSortType = SortType.DAY;
 
     this._menuComponent = new MenuView();
     this._filtersComponent = new FiltersView();
@@ -71,13 +71,13 @@ export default class Trip {
         this._points.sort(sortPointPrice);
     }
 
-    this._currentSortType = sortType;
+    // this._currentSortType = sortType;
   }
 
   _handleSortTypeChange(sortType) {
-    if (this._currentSortType === sortType) {
-      return;
-    }
+    // if (this._currentSortType === sortType) {
+    //   return;
+    // }
 
     this._sortPoints(sortType);
     this._clearPoints();
