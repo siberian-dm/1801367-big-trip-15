@@ -39,7 +39,15 @@ export default class Trip {
     render(this._menuContainer, this._menuComponent);
     render(this._filtersContainer, this._filtersComponent);
     render(this._pointsContainer, this._pointsComponent);
-    this._renderTrip();
+
+    if (!this._points.length) {
+      this._renderNoPoints();
+    }
+    else {
+      this._renderInfo();
+      this._renderSort();
+      this._renderTripPoints();
+    }
   }
 
   _handlePointChange(updatedPoint) {
@@ -73,7 +81,7 @@ export default class Trip {
 
     this._sortPoints(sortType);
     this._clearPoints();
-    this._renderTrip();
+    this._renderTripPoints();
   }
 
   _renderInfo() {
@@ -99,20 +107,12 @@ export default class Trip {
     this._pointPresenter.set(point.id, pointPresenter);
   }
 
+  _renderTripPoints() {
+    this._points.forEach((point) => this._renderPoint(point));
+  }
+
   _clearPoints() {
     this._pointPresenter.forEach((presenter) => presenter.destroy());
     this._pointPresenter.clear();
-  }
-
-  _renderTrip() {
-    if (!this._points.length) {
-      this._renderNoPoints();
-    }
-    else {
-      this._renderInfo();
-      this._renderSort();
-
-      this._points.forEach((point) => this._renderPoint(point));
-    }
   }
 }
