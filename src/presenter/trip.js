@@ -27,6 +27,7 @@ export default class Trip {
 
     this._handlePointChange = this._handlePointChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(points) {
@@ -47,6 +48,10 @@ export default class Trip {
     this._pointPresenter.forEach((presenter) => presenter.resetView());
   }
 
+  _handleSortTypeChange() {
+    ///
+  }
+
   _renderInfo() {
     this._tripInfoComponent = new InfoView(this._points);
 
@@ -55,6 +60,8 @@ export default class Trip {
 
   _renderSort() {
     render(this._pointsContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
+
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderNoPoints() {

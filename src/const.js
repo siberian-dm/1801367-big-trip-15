@@ -116,3 +116,8 @@ export const OFFER_TYPES = [
   },
 ];
 export const CITIES = ['Amsterdam', 'Chamonix', 'Geneva', 'Prague', 'Berlin', 'Stockholm'];
+export const SortType = {
+  DAY: 'sort-day',
+  TIME: 'sort-time',
+  PRICE: 'sort-price',
+};
