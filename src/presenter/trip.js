@@ -7,8 +7,10 @@ import SortView from '../view/sort';
 import PointsView from '../view/trip-points';
 import NoPointsView from '../view/no-trip-points';
 
+import {SortType} from '../const';
 import {render, RenderPosition} from '../utils/render';
 import {updateItem} from '../utils/common';
+import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/sort';
 
 
 export default class Trip {
@@ -18,6 +20,7 @@ export default class Trip {
     this._filtersContainer = filtersContainer;
     this._pointsContainer = pointsContainer;
     this._pointPresenter = new Map();
+    this._currentSortType = SortType.DAY;
 
     this._menuComponent = new MenuView();
     this._filtersComponent = new FiltersView();
@@ -48,8 +51,29 @@ export default class Trip {
     this._pointPresenter.forEach((presenter) => presenter.resetView());
   }
 
-  _handleSortTypeChange() {
-    ///
+  _sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.DAY:
+        this._points.sort(sortPointDay);
+        break;
+      case SortType.TIME:
+        this._points.sort(sortPointTime);
+        break;
+      case SortType.PRICE:
+        this._points.sort(sortPointPrice);
+    }
+
+    this._currentSortType = sortType;
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._sortPoints(sortType);
+    this._clearPoints();
+    this._renderTrip();
   }
 
   _renderInfo() {
