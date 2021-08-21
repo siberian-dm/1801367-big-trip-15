@@ -4,17 +4,17 @@ import {getHumanizeVisibleDateForInfo} from '../utils/date-format';
 const TRIP_POINT_TITLE_COUNT = 3;
 
 
-const createTripInfoTemplate = (tripPoints) => {
-  const firstEvent = tripPoints[0];
-  const lastEvent = tripPoints[tripPoints.length - 1];
+const createInfoTemplate = (points) => {
+  const firstPoint = points[0];
+  const lastPoint = points[points.length - 1];
   const initialValue = 0;
 
-  const tripInfoTitle = tripPoints.length <= TRIP_POINT_TITLE_COUNT
-    ? tripPoints.map((event) => event.destination.name).join(' &mdash; ')
-    : `${firstEvent.destination.name} &mdash; ... &mdash; ${lastEvent.destination.name}`;
+  const infoTitle = points.length <= TRIP_POINT_TITLE_COUNT
+    ? points.map((point) => point.destination.name).join(' &mdash; ')
+    : `${firstPoint.destination.name} &mdash; ... &mdash; ${lastPoint.destination.name}`;
 
-  const tripInfoCost = tripPoints.reduce((totalCost, tripPoint) => {
-    const {basePrice, offers} = tripPoint;
+  const tripCost = points.reduce((totalCost, point) => {
+    const {basePrice, offers} = point;
     const offerCost = offers.reduce((cost, offer) => cost + offer.price, initialValue);
 
     return totalCost + basePrice + offerCost;
@@ -23,26 +23,26 @@ const createTripInfoTemplate = (tripPoints) => {
   return (
     `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
-        <h1 class="trip-info__title">${tripInfoTitle}</h1>
+        <h1 class="trip-info__title">${infoTitle}</h1>
 
-        <p class="trip-info__dates">${getHumanizeVisibleDateForInfo(firstEvent.dateFrom, lastEvent.dateTo)}</p>
+        <p class="trip-info__dates">${getHumanizeVisibleDateForInfo(firstPoint.dateFrom, lastPoint.dateTo)}</p>
       </div>
 
       <p class="trip-info__cost">
-        Total: &euro;&nbsp;<span class="trip-info__cost-value">${tripInfoCost}</span>
+        Total: &euro;&nbsp;<span class="trip-info__cost-value">${tripCost}</span>
       </p>
     </section>`
   );
 };
 
 
-export default class TripInfo extends AbstractView {
-  constructor(tripPoints) {
+export default class Info extends AbstractView {
+  constructor(points) {
     super();
-    this._tripPoints = tripPoints;
+    this._points = points;
   }
 
   getTemplate() {
-    return createTripInfoTemplate(this._tripPoints);
+    return createInfoTemplate(this._points);
   }
 }

@@ -1,42 +1,34 @@
 import AbstractView from './abstract';
-import {POINT_TYPES} from '../const';
 import {CITIES, OFFER_TYPES} from '../const';
 import {getHumanizeVisibleDateForForm} from '../utils/date-format';
 
 
-const createPointTypeListTemplate = (pointTypes, selectedType, id) => {
-  let pointTypeItems = '';
-  for (const eventType of pointTypes) {
-    pointTypeItems += (
-      `<div class="event__type-item">
-        <input id="event-type-${eventType}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${eventType === selectedType ? 'checked' : ''}>
-        <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${id}">${eventType}</label>
-      </div>`
-    );
-  }
-
-  return pointTypeItems;
-};
+const createPointTypesTemplate = (pointTypes, selectedType, id) =>
+  pointTypes.map((type) => (
+    `<div class="event__type-item">
+      <input id="event-type-${type}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === selectedType ? 'checked' : ''}>
+      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${id}">${type}</label>
+    </div>`)).join('');
 
 
 const createOffersTemplate = (offers, selectedOffers, id) => {
-  const selectedOffersList = selectedOffers.map((offer) => offer.title);
+  const offersToChecked = selectedOffers.map((offer) => offer.title);
 
-  let offerItems = '';
-  for (const offer of offers) {
-    const isChecked = !!selectedOffersList.includes(offer.title);
-    const offerTitleFormated = offer.title.toLowerCase().replace(/ /g, '-');
-    offerItems += (
+  const offerItems = offers.map((offer) => {
+    const {title, price} = offer;
+    const isChecked = offersToChecked.includes(title);
+    const titleFormated = title.toLowerCase().replace(/ /g, '-');
+
+    return (
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerTitleFormated}-${id}" type="checkbox" name="event-offer-${offerTitleFormated}" ${isChecked ? 'checked' : ''}>
-        <label class="event__offer-label" for="event-offer-${offerTitleFormated}-${id}">
-          <span class="event__offer-title">${offer.title}</span>
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${titleFormated}-${id}" type="checkbox" name="event-offer-${titleFormated}" ${isChecked ? 'checked' : ''}>
+        <label class="event__offer-label" for="event-offer-${titleFormated}-${id}">
+          <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
-          <span class="event__offer-price">${offer.price}</span>
+          <span class="event__offer-price">${price}</span>
         </label>
-      </div>`
-    );
-  }
+      </div>`);
+  }).join('');
 
   return (
     `<section class="event__section  event__section--offers">
@@ -49,38 +41,26 @@ const createOffersTemplate = (offers, selectedOffers, id) => {
 };
 
 
-const createDestinationTemplate = (destination) => {
+const createDestinationTemplate = (destination) => (
+  `<section class="event__section  event__section--destination">
+    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+    <p class="event__destination-description">${destination.description}</p>
+    <div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo">`).join('')}
+      </div>
+    </div>
+  </section>`
+);
+
+
+const createEditPointFormTemplate = (point) => {
+  const {id, basePrice, dateFrom, dateTo, destination, offers, type} = point;
   const {description, pictures} = destination;
 
-  let pictureItems = '';
-  if (pictures.length) {
-    for (const picture of pictures) {
-      pictureItems += `<img class="event__photo" src="${picture.src}" alt="Event photo">`;
-    }
-  }
-
-  return (
-    `<section class="event__section  event__section--destination">
-      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${description}</p>
-      <div class="event__photos-container">
-        <div class="event__photos-tape">
-          ${pictureItems}
-        </div>
-      </div>
-    </section>`
-  );
-};
-
-
-const createEditTripPointFormTemplate = (tripPoint) => {
-  const {id, basePrice, dateFrom, dateTo, destination, offers, type} = tripPoint;
+  const pointTypes = OFFER_TYPES.map((offer) => offer.type);
 
   const availableOffers = OFFER_TYPES.find((offer) => offer.type === type).offers;
-
-  const destinationDescription = destination.description || destination.pictures.length
-    ? createDestinationTemplate(destination)
-    : '';
 
   return (
     `<li class="trip-events__item">
@@ -96,7 +76,7 @@ const createEditTripPointFormTemplate = (tripPoint) => {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${createPointTypeListTemplate(POINT_TYPES, type, id)}
+                ${createPointTypesTemplate(pointTypes, type, id)}
 
               </fieldset>
             </div>
@@ -136,7 +116,7 @@ const createEditTripPointFormTemplate = (tripPoint) => {
         </header>
         <section class="event__details">
           ${availableOffers.length ? createOffersTemplate(availableOffers, offers, id) : ''}
-          ${destinationDescription}
+          ${description || pictures.length ? createDestinationTemplate(destination) : ''}
         </section>
       </form>
     </li>`
@@ -144,17 +124,17 @@ const createEditTripPointFormTemplate = (tripPoint) => {
 };
 
 
-export default class EditTripPointForm extends AbstractView {
-  constructor(tripPoint) {
+export default class EditPointForm extends AbstractView {
+  constructor(point) {
     super();
-    this._tripPoint = tripPoint;
+    this._point = point;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
-    this._switchToTripPointHandler = this._switchToTripPointHandler.bind(this);
+    this._switchToPointHandler = this._switchToPointHandler.bind(this);
     this._removeComponentHandler = this._removeComponentHandler.bind(this);
   }
 
   getTemplate() {
-    return createEditTripPointFormTemplate(this._tripPoint);
+    return createEditPointFormTemplate(this._point);
   }
 
   _formSubmitHandler(evt) {
@@ -162,9 +142,9 @@ export default class EditTripPointForm extends AbstractView {
     this._callback.formSubmit();
   }
 
-  _switchToTripPointHandler(evt) {
+  _switchToPointHandler(evt) {
     evt.preventDefault();
-    this._callback.switchToTripPoint();
+    this._callback.switchToPoint();
   }
 
   _removeComponentHandler(evt) {
@@ -177,9 +157,9 @@ export default class EditTripPointForm extends AbstractView {
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 
-  setSwitchToTripPointHandler(callback) {
-    this._callback.switchToTripPoint = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._switchToTripPointHandler);
+  setSwitchToPointHandler(callback) {
+    this._callback.switchToPoint = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._switchToPointHandler);
   }
 
   setRemoveComponentHandler(callback) {
