@@ -31,3 +31,6 @@ export const getHumanizeEventDuration = (dateFrom, dateTo) => {
 
   return humanizeEventDuration;
 };
+
+
+export const getDateDiff = (dateA, dateB) => dayjs(dateA).diff(dayjs(dateB));
