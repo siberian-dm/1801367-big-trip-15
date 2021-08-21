@@ -137,21 +137,6 @@ export default class EditPointForm extends AbstractView {
     return createEditPointFormTemplate(this._point);
   }
 
-  _formSubmitHandler(evt) {
-    evt.preventDefault();
-    this._callback.formSubmit();
-  }
-
-  _switchToPointHandler(evt) {
-    evt.preventDefault();
-    this._callback.switchToPoint();
-  }
-
-  _removeComponentHandler(evt) {
-    evt.preventDefault();
-    this._callback.removeComponent();
-  }
-
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
@@ -165,5 +150,20 @@ export default class EditPointForm extends AbstractView {
   setRemoveComponentHandler(callback) {
     this._callback.removeComponent = callback;
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._removeComponentHandler);
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  _switchToPointHandler(evt) {
+    evt.preventDefault();
+    this._callback.switchToPoint();
+  }
+
+  _removeComponentHandler(evt) {
+    evt.preventDefault();
+    this._callback.removeComponent();
   }
 }

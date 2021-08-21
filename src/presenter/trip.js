@@ -20,7 +20,6 @@ export default class Trip {
     this._filtersContainer = filtersContainer;
     this._pointsContainer = pointsContainer;
     this._pointPresenter = new Map();
-    // this._currentSortType = SortType.DAY;
 
     this._menuComponent = new MenuView();
     this._filtersComponent = new FiltersView();
@@ -48,40 +47,6 @@ export default class Trip {
       this._renderSort();
       this._renderTripPoints();
     }
-  }
-
-  _handlePointChange(updatedPoint) {
-    this._points = updateItem(this._points, updatedPoint);
-    this._pointPresenter.get(updatedPoint.id).init(updatedPoint);
-  }
-
-  _handleModeChange() {
-    this._pointPresenter.forEach((presenter) => presenter.resetView());
-  }
-
-  _sortPoints(sortType) {
-    switch (sortType) {
-      case SortType.DAY:
-        this._points.sort(sortPointDay);
-        break;
-      case SortType.TIME:
-        this._points.sort(sortPointTime);
-        break;
-      case SortType.PRICE:
-        this._points.sort(sortPointPrice);
-    }
-
-    // this._currentSortType = sortType;
-  }
-
-  _handleSortTypeChange(sortType) {
-    // if (this._currentSortType === sortType) {
-    //   return;
-    // }
-
-    this._sortPoints(sortType);
-    this._clearPoints();
-    this._renderTripPoints();
   }
 
   _renderInfo() {
@@ -114,5 +79,33 @@ export default class Trip {
   _clearPoints() {
     this._pointPresenter.forEach((presenter) => presenter.destroy());
     this._pointPresenter.clear();
+  }
+
+  _sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.DAY:
+        this._points.sort(sortPointDay);
+        break;
+      case SortType.TIME:
+        this._points.sort(sortPointTime);
+        break;
+      case SortType.PRICE:
+        this._points.sort(sortPointPrice);
+    }
+  }
+
+  _handleSortTypeChange(sortType) {
+    this._sortPoints(sortType);
+    this._clearPoints();
+    this._renderTripPoints();
+  }
+
+  _handlePointChange(updatedPoint) {
+    this._points = updateItem(this._points, updatedPoint);
+    this._pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  }
+
+  _handleModeChange() {
+    this._pointPresenter.forEach((presenter) => presenter.resetView());
   }
 }
