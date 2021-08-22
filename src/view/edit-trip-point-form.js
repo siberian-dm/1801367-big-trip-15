@@ -11,13 +11,14 @@ const createPointTypesTemplate = (pointTypes, selectedType, id) =>
     </div>`)).join('');
 
 
-const createOffersTemplate = (offers, selectedOffers, id) => {
-  const offersToChecked = selectedOffers.map((offer) => offer.title);
-
-  const offerItems = offers.map((offer) => {
-    const {title, price} = offer;
-    const isChecked = offersToChecked.includes(title);
-    const titleFormated = title.toLowerCase().replace(/ /g, '-');
+const createOffersTemplate = (offers, id) => {
+  const availableOffers = offers.map((offer) => {
+    const {
+      title,
+      price,
+      isChecked,
+      titleFormated,
+    } = offer;
 
     return (
       `<div class="event__offer-selector">
@@ -34,7 +35,7 @@ const createOffersTemplate = (offers, selectedOffers, id) => {
     `<section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       <div class="event__available-offers">
-        ${offerItems}
+        ${availableOffers}
       </div>
     </section>`
   );
@@ -54,13 +55,19 @@ const createDestinationTemplate = (destination) => (
 );
 
 
-const createEditPointFormTemplate = (point) => {
-  const {id, basePrice, dateFrom, dateTo, destination, offers, type} = point;
-  const {description, pictures} = destination;
-
-  const pointTypes = OFFER_TYPES.map((offer) => offer.type);
-
-  const availableOffers = OFFER_TYPES.find((offer) => offer.type === type).offers;
+const createEditPointFormTemplate = (data) => {
+  const {
+    id,
+    basePrice,
+    dateFrom,
+    dateTo,
+    destination,
+    type,
+    pointTypes,
+    availableOffers,
+    isAvailableOffers,
+    isDescription,
+  } = data;
 
   return (
     `<li class="trip-events__item">
@@ -115,8 +122,8 @@ const createEditPointFormTemplate = (point) => {
           </button>
         </header>
         <section class="event__details">
-          ${availableOffers.length ? createOffersTemplate(availableOffers, offers, id) : ''}
-          ${description || pictures.length ? createDestinationTemplate(destination) : ''}
+          ${isAvailableOffers ? createOffersTemplate(availableOffers, id) : ''}
+          ${isDescription ? createDestinationTemplate(destination) : ''}
         </section>
       </form>
     </li>`
@@ -127,14 +134,14 @@ const createEditPointFormTemplate = (point) => {
 export default class EditPointForm extends AbstractView {
   constructor(point) {
     super();
-    this._point = point;
+    this._data = EditPointForm.parseStateToData(point);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._switchToPointHandler = this._switchToPointHandler.bind(this);
     this._removeComponentHandler = this._removeComponentHandler.bind(this);
   }
 
   getTemplate() {
-    return createEditPointFormTemplate(this._point);
+    return createEditPointFormTemplate(this._data);
   }
 
   setFormSubmitHandler(callback) {
@@ -165,5 +172,49 @@ export default class EditPointForm extends AbstractView {
   _removeComponentHandler(evt) {
     evt.preventDefault();
     this._callback.removeComponent();
+  }
+
+  static parseStateToData(point) {
+    const {type, destination, offers} = point;
+    const {description, pictures} = destination;
+
+    const pointTypes = OFFER_TYPES.map((offer) => offer.type);
+    const pointOffers = OFFER_TYPES.find((offer) => offer.type === type).offers;
+
+    const availableOffers = pointOffers.map((pointOffer) => {
+      const {title, price} = pointOffer;
+
+      const isChecked = offers.some((offer) => offer.title === title);
+      const titleFormated = title.toLowerCase().replace(/ /g, '-');
+
+      return {
+        title,
+        price,
+        isChecked,
+        titleFormated,
+      };
+    });
+
+    return Object.assign(
+      {},
+      point,
+      {
+        pointTypes,
+        availableOffers,
+        isAvailableOffers: !!pointOffers.length,
+        isDescription: !!description || !!pictures.length,
+      },
+    );
+  }
+
+  static parseDataToState(data) {
+    data = Object.assign({}, data);
+
+    delete data.pointTypes;
+    delete data.availableOffers;
+    delete data.isAvailableOffers;
+    delete data.isDescription;
+
+    return data;
   }
 }
