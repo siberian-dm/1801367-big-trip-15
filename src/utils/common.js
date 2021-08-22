@@ -1,13 +1,13 @@
-export const updateItem = (items, updatedItem) => {
-  const index = items.findIndex((item) => item.id === updatedItem.id);
+export const updatePoint = (points, updatedPoint) => {
+  const index = points.findIndex((point) => point.id === updatedPoint.id);
 
   if (index === -1) {
-    return items;
+    return points;
   }
 
   return [
-    ...items.slice(0, index),
-    updatedItem,
-    ...items.slice(index + 1),
+    ...points.slice(0, index),
+    updatedPoint,
+    ...points.slice(index + 1),
   ];
 };
