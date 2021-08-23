@@ -1,4 +1,4 @@
-import AbstractView from './abstract';
+import SmartView from './smart';
 import {CITIES, OFFER_TYPES} from '../const';
 import {getHumanizeVisibleDateForForm} from '../utils/date-format';
 import {updateItem} from '../utils/common';
@@ -133,7 +133,7 @@ const createEditPointFormTemplate = (data) => {
 };
 
 
-export default class EditPointForm extends AbstractView {
+export default class EditPointForm extends SmartView {
   constructor(point) {
     super();
     this._data = EditPointForm.parseStateToData(point);
@@ -149,29 +149,11 @@ export default class EditPointForm extends AbstractView {
     return createEditPointFormTemplate(this._data);
   }
 
-  updateElement() {
-    const prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-  }
-
-  updateData(update) {
-    if (!update) {
-      return;
-    }
-
-    this._data = Object.assign(
-      {},
-      this._data,
-      update,
-    );
-
-    this.updateElement();
-    this._restoreHandlers();
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setSwitchToPointHandler(this._callback.switchToPoint);
+    this.setRemoveComponentHandler(this._callback.removeComponent);
   }
 
   setFormSubmitHandler(callback) {
@@ -221,18 +203,9 @@ export default class EditPointForm extends AbstractView {
     }
   }
 
-  _restoreHandlers() {
-    this._setInnerHandlers();
-    this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setSwitchToPointHandler(this._callback.switchToPoint);
-    this.setRemoveComponentHandler(this._callback.removeComponent);
-  }
+  static parseOffersToData(point) {
+    const {id, type, offers} = point;
 
-  static parseStateToData(point) {
-    const {id, type, destination, offers} = point;
-    const {description, pictures} = destination;
-
-    const pointTypes = OFFER_TYPES.map((offer) => offer.type);
     const pointOffers = OFFER_TYPES.find((offer) => offer.type === type).offers;
 
     const availableOffers = pointOffers.map((pointOffer) => {
@@ -251,13 +224,23 @@ export default class EditPointForm extends AbstractView {
       };
     });
 
+    return availableOffers;
+  }
+
+  static parseStateToData(point) {
+    const {destination} = point;
+    const {description, pictures} = destination;
+
+    const pointTypes = OFFER_TYPES.map((offer) => offer.type);
+    const availableOffers = EditPointForm.parseOffersToData(point);
+
     return Object.assign(
       {},
       point,
       {
         pointTypes,
         availableOffers,
-        isAvailableOffers: !!pointOffers.length,
+        isAvailableOffers: !!availableOffers.length,
         isDescription: !!description || !!pictures.length,
       },
     );
