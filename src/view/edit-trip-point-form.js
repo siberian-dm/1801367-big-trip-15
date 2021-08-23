@@ -1,6 +1,7 @@
 import AbstractView from './abstract';
 import {CITIES, OFFER_TYPES} from '../const';
 import {getHumanizeVisibleDateForForm} from '../utils/date-format';
+import {updateItem} from '../utils/common';
 
 
 const createPointTypesTemplate = (pointTypes, selectedType, id) =>
@@ -11,9 +12,10 @@ const createPointTypesTemplate = (pointTypes, selectedType, id) =>
     </div>`)).join('');
 
 
-const createOffersTemplate = (offers, id) => {
+const createOffersTemplate = (offers) => {
   const availableOffers = offers.map((offer) => {
     const {
+      id,
       title,
       price,
       isChecked,
@@ -22,8 +24,8 @@ const createOffersTemplate = (offers, id) => {
 
     return (
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${titleFormated}-${id}" type="checkbox" name="event-offer-${titleFormated}" ${isChecked ? 'checked' : ''}>
-        <label class="event__offer-label" for="event-offer-${titleFormated}-${id}">
+        <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="${titleFormated}" ${isChecked ? 'checked' : ''}>
+        <label class="event__offer-label" for="${id}">
           <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${price}</span>
@@ -122,7 +124,7 @@ const createEditPointFormTemplate = (data) => {
           </button>
         </header>
         <section class="event__details">
-          ${isAvailableOffers ? createOffersTemplate(availableOffers, id) : ''}
+          ${isAvailableOffers ? createOffersTemplate(availableOffers) : ''}
           ${isDescription ? createDestinationTemplate(destination) : ''}
         </section>
       </form>
@@ -138,6 +140,9 @@ export default class EditPointForm extends AbstractView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._switchToPointHandler = this._switchToPointHandler.bind(this);
     this._removeComponentHandler = this._removeComponentHandler.bind(this);
+    this._offerCheckHandler = this._offerCheckHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
@@ -166,6 +171,7 @@ export default class EditPointForm extends AbstractView {
     );
 
     this.updateElement();
+    this._restoreHandlers();
   }
 
   setFormSubmitHandler(callback) {
@@ -183,9 +189,18 @@ export default class EditPointForm extends AbstractView {
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._removeComponentHandler);
   }
 
+  _offerCheckHandler(evt) {
+    const targetOffer = this._data.availableOffers.find((offer) => offer.titleFormated === evt.target.name);
+    const updateOffer = Object.assign({}, targetOffer, {isChecked: !targetOffer.isChecked});
+
+    this.updateData({
+      availableOffers: updateItem(this._data.availableOffers, updateOffer),
+    });
+  }
+
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(EditPointForm.parseDataToState(this._data));
   }
 
   _switchToPointHandler(evt) {
@@ -198,8 +213,23 @@ export default class EditPointForm extends AbstractView {
     this._callback.removeComponent();
   }
 
+  _setInnerHandlers() {
+    if (this._data.availableOffers.length) {
+      this.getElement()
+        .querySelector('.event__available-offers')
+        .addEventListener('change', this._offerCheckHandler);
+    }
+  }
+
+  _restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setSwitchToPointHandler(this._callback.switchToPoint);
+    this.setRemoveComponentHandler(this._callback.removeComponent);
+  }
+
   static parseStateToData(point) {
-    const {type, destination, offers} = point;
+    const {id, type, destination, offers} = point;
     const {description, pictures} = destination;
 
     const pointTypes = OFFER_TYPES.map((offer) => offer.type);
@@ -209,9 +239,11 @@ export default class EditPointForm extends AbstractView {
       const {title, price} = pointOffer;
 
       const isChecked = offers.some((offer) => offer.title === title);
-      const titleFormated = title.toLowerCase().replace(/ /g, '-');
+      const titleFormated = `event-offer-${title.toLowerCase().replace(/ /g, '-')}`;
+      const offerId = `${titleFormated}-${id}`;
 
       return {
+        id: offerId,
         title,
         price,
         isChecked,
@@ -233,6 +265,9 @@ export default class EditPointForm extends AbstractView {
 
   static parseDataToState(data) {
     data = Object.assign({}, data);
+
+    data.offers = data.availableOffers.filter((offer) => offer.isChecked)
+      .map((offer) => ({title: offer.title, price: offer.price}));
 
     delete data.pointTypes;
     delete data.availableOffers;

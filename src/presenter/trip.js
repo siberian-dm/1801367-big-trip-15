@@ -9,7 +9,7 @@ import NoPointsView from '../view/no-trip-points';
 
 import {SortType} from '../const';
 import {render, RenderPosition} from '../utils/render';
-import {updatePoint} from '../utils/common';
+import {updateItem} from '../utils/common';
 import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/sort';
 
 
@@ -101,7 +101,7 @@ export default class Trip {
   }
 
   _handlePointChange(updatedPoint) {
-    this._points = updatePoint(this._points, updatedPoint);
+    this._points = updateItem(this._points, updatedPoint);
     this._pointPresenter.get(updatedPoint.id).init(updatedPoint);
   }
 
