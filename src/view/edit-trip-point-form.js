@@ -1,5 +1,5 @@
 import SmartView from './smart';
-import {CITIES, OFFER_TYPES} from '../const';
+import {DESTINATIONS, OFFER_TYPES} from '../const';
 import {getHumanizeVisibleDateForForm} from '../utils/date-format';
 import {updateItem} from '../utils/common';
 
@@ -65,6 +65,7 @@ const createEditPointFormTemplate = (data) => {
     dateTo,
     destination,
     type,
+    cities,
     pointTypes,
     availableOffers,
     isAvailableOffers,
@@ -97,7 +98,7 @@ const createEditPointFormTemplate = (data) => {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination.name}" list="destination-list-${id}">
             <datalist id="destination-list-${id}">
-              ${CITIES.map((city) => `<option value="${city}"></option>`).join('')}
+              ${cities.map((city) => `<option value="${city}"></option>`).join('')}
             </datalist>
           </div>
 
@@ -231,6 +232,7 @@ export default class EditPointForm extends SmartView {
     const {destination} = point;
     const {description, pictures} = destination;
 
+    const cities = DESTINATIONS.map((city) => city.name);
     const pointTypes = OFFER_TYPES.map((offer) => offer.type);
     const availableOffers = EditPointForm.parseOffersToData(point);
 
@@ -238,6 +240,7 @@ export default class EditPointForm extends SmartView {
       {},
       point,
       {
+        cities,
         pointTypes,
         availableOffers,
         isAvailableOffers: !!availableOffers.length,
@@ -252,6 +255,7 @@ export default class EditPointForm extends SmartView {
     data.offers = data.availableOffers.filter((offer) => offer.isChecked)
       .map((offer) => ({title: offer.title, price: offer.price}));
 
+    delete data.cities;
     delete data.pointTypes;
     delete data.availableOffers;
     delete data.isAvailableOffers;
