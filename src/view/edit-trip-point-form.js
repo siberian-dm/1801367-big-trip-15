@@ -138,9 +138,11 @@ export default class EditPointForm extends SmartView {
   constructor(point) {
     super();
     this._data = EditPointForm.parseStateToData(point);
+
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._switchToPointHandler = this._switchToPointHandler.bind(this);
     this._removeComponentHandler = this._removeComponentHandler.bind(this);
+    this._pointTypeCheckHandler = this._pointTypeCheckHandler.bind(this);
     this._offerCheckHandler = this._offerCheckHandler.bind(this);
 
     this._setInnerHandlers();
@@ -172,9 +174,20 @@ export default class EditPointForm extends SmartView {
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._removeComponentHandler);
   }
 
+  _pointTypeCheckHandler(evt) {
+    const checkedType = evt.target.value;
+
+    this.updateData({
+      offers: [],
+      type: checkedType,
+      availableOffers: this._data.offerData.get(checkedType),
+      isAvailableOffers: !!this._data.offerData.get(checkedType).length,
+    });
+  }
+
   _offerCheckHandler(evt) {
-    const targetOffer = this._data.availableOffers.find((offer) => offer.titleFormated === evt.target.name);
-    const updateOffer = Object.assign({}, targetOffer, {isChecked: !targetOffer.isChecked});
+    const checkedtOffer = this._data.availableOffers.find((offer) => offer.titleFormated === evt.target.name);
+    const updateOffer = Object.assign({}, checkedtOffer, {isChecked: !checkedtOffer.isChecked});
 
     this.updateData({
       availableOffers: updateItem(this._data.availableOffers, updateOffer),
@@ -197,49 +210,58 @@ export default class EditPointForm extends SmartView {
   }
 
   _setInnerHandlers() {
-    if (this._data.availableOffers.length) {
+    this.getElement()
+      .querySelector('.event__type-list')
+      .addEventListener('change', this._pointTypeCheckHandler);
+
+    if (this._data.isAvailableOffers) {
       this.getElement()
         .querySelector('.event__available-offers')
         .addEventListener('change', this._offerCheckHandler);
     }
   }
 
-  static parseOffersToData(point) {
-    const {id, type, offers} = point;
-
-    const pointOffers = OFFER_TYPES.find((offer) => offer.type === type).offers;
-
-    const availableOffers = pointOffers.map((pointOffer) => {
-      const {title, price} = pointOffer;
-
-      const isChecked = offers.some((offer) => offer.title === title);
+  static parseOffersToData(id) {
+    const parseOfferToData = (offer) => {
+      const {title, price} = offer;
       const titleFormated = `event-offer-${title.toLowerCase().replace(/ /g, '-')}`;
       const offerId = `${titleFormated}-${id}`;
-
       return {
-        id: offerId,
         title,
         price,
-        isChecked,
-        titleFormated,
+        id: offerId,
+        titleFormated: titleFormated,
+        isChecked: false,
       };
-    });
+    };
 
-    return availableOffers;
+    const offerData = new Map;
+
+    for (const offerType of OFFER_TYPES) {
+      offerData.set(offerType.type, offerType.offers.map(parseOfferToData));
+    }
+
+    return offerData;
   }
 
   static parseStateToData(point) {
-    const {destination} = point;
-    const {description, pictures} = destination;
+    const {destination: {description, pictures}, offers, type, id} = point;
 
+    const offerData = EditPointForm.parseOffersToData(id);
     const cities = DESTINATIONS.map((city) => city.name);
     const pointTypes = OFFER_TYPES.map((offer) => offer.type);
-    const availableOffers = EditPointForm.parseOffersToData(point);
+
+    const availableOffers = offerData.get(type).map((offersByType) => {
+      const isChecked = offers.some((offer) => offer.title === offersByType.title);
+
+      return Object.assign({}, offersByType, {isChecked: isChecked});
+    });
 
     return Object.assign(
       {},
       point,
       {
+        offerData,
         cities,
         pointTypes,
         availableOffers,
@@ -255,6 +277,7 @@ export default class EditPointForm extends SmartView {
     data.offers = data.availableOffers.filter((offer) => offer.isChecked)
       .map((offer) => ({title: offer.title, price: offer.price}));
 
+    delete data.offerData;
     delete data.cities;
     delete data.pointTypes;
     delete data.availableOffers;
