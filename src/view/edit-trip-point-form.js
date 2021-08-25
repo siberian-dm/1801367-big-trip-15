@@ -4,11 +4,11 @@ import {getHumanizeVisibleDateForForm} from '../utils/date-format';
 import {updateItem} from '../utils/common';
 
 
-const createPointTypesTemplate = (pointTypes, selectedType, id) =>
-  pointTypes.map((type) => (
+const createPointTypesTemplate = (types) =>
+  types.map(({type, id, isChecked}) => (
     `<div class="event__type-item">
-      <input id="event-type-${type}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === selectedType ? 'checked' : ''}>
-      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${id}">${type}</label>
+      <input id="${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${isChecked ? 'checked' : ''}>
+      <label class="event__type-label  event__type-label--${type}" for="${id}">${type}</label>
     </div>`)).join('');
 
 
@@ -86,7 +86,7 @@ const createEditPointFormTemplate = (data) => {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${createPointTypesTemplate(pointTypes, type, id)}
+                ${createPointTypesTemplate(pointTypes)}
 
               </fieldset>
             </div>
@@ -144,6 +144,7 @@ export default class EditPointForm extends SmartView {
     this._removeComponentHandler = this._removeComponentHandler.bind(this);
     this._pointTypeCheckHandler = this._pointTypeCheckHandler.bind(this);
     this._offerCheckHandler = this._offerCheckHandler.bind(this);
+    this._destinationChoiceHandler = this._destinationChoiceHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -175,14 +176,26 @@ export default class EditPointForm extends SmartView {
   }
 
   _pointTypeCheckHandler(evt) {
-    const checkedType = evt.target.value;
+    const checkedType = this._data.pointTypes.find((point) => point.type === evt.target.value);
+    const updateType = Object.assign({}, checkedType, {isChecked: !checkedType.isChecked});
 
     this.updateData({
       offers: [],
-      type: checkedType,
-      availableOffers: this._data.offerData.get(checkedType),
-      isAvailableOffers: !!this._data.offerData.get(checkedType).length,
+      type: checkedType.type,
+      pointTypes: updateItem(this._data.pointTypes, updateType),
+      availableOffers: this._data.offerData.get(checkedType.type),
+      isAvailableOffers: !!this._data.offerData.get(checkedType.type).length,
     });
+  }
+
+  _destinationChoiceHandler(evt) {
+    const chosenCity = evt.target.value;
+
+    if (DESTINATIONS.some((point) => point.name === chosenCity)) {
+      this.updateData({
+        destination: DESTINATIONS.find((point) => point.name === chosenCity),
+      });
+    }
   }
 
   _offerCheckHandler(evt) {
@@ -192,6 +205,7 @@ export default class EditPointForm extends SmartView {
     this.updateData({
       availableOffers: updateItem(this._data.availableOffers, updateOffer),
     });
+
   }
 
   _formSubmitHandler(evt) {
@@ -214,6 +228,10 @@ export default class EditPointForm extends SmartView {
       .querySelector('.event__type-list')
       .addEventListener('change', this._pointTypeCheckHandler);
 
+    this.getElement()
+      .querySelector('.event__input--destination')
+      .addEventListener('change', this._destinationChoiceHandler);
+
     if (this._data.isAvailableOffers) {
       this.getElement()
         .querySelector('.event__available-offers')
@@ -221,11 +239,23 @@ export default class EditPointForm extends SmartView {
     }
   }
 
+  static parsePointTypesToData(type, id) {
+    const pointTypes = OFFER_TYPES.map((offer) => (
+      {
+        type: offer.type,
+        id: `event-type-${offer.type}-${id}`,
+        isChecked: offer.type === type,
+      }
+    ));
+
+    return pointTypes;
+  }
+
   static parseOffersToData(id) {
-    const parseOfferToData = (offer) => {
-      const {title, price} = offer;
+    const parseOfferToData = ({title, price}) => {
       const titleFormated = `event-offer-${title.toLowerCase().replace(/ /g, '-')}`;
       const offerId = `${titleFormated}-${id}`;
+
       return {
         title,
         price,
@@ -248,8 +278,8 @@ export default class EditPointForm extends SmartView {
     const {destination: {description, pictures}, offers, type, id} = point;
 
     const offerData = EditPointForm.parseOffersToData(id);
+    const pointTypes = EditPointForm.parsePointTypesToData(type, id);
     const cities = DESTINATIONS.map((city) => city.name);
-    const pointTypes = OFFER_TYPES.map((offer) => offer.type);
 
     const availableOffers = offerData.get(type).map((offersByType) => {
       const isChecked = offers.some((offer) => offer.title === offersByType.title);
