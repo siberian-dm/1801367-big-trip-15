@@ -176,15 +176,17 @@ export default class EditPointForm extends SmartView {
   }
 
   _pointTypeCheckHandler(evt) {
-    const checkedType = this._data.pointTypes.find((point) => point.type === evt.target.value);
-    const updateType = Object.assign({}, checkedType, {isChecked: !checkedType.isChecked});
+    const checkedType = evt.target.value;
+    const updatePointTypes = this._data.pointTypes.map((point) => (
+      Object.assign({}, point, {isChecked: point.type === checkedType})
+    ));
 
     this.updateData({
       offers: [],
-      type: checkedType.type,
-      pointTypes: updateItem(this._data.pointTypes, updateType),
-      availableOffers: this._data.offerData.get(checkedType.type),
-      isAvailableOffers: !!this._data.offerData.get(checkedType.type).length,
+      type: checkedType,
+      pointTypes: updatePointTypes,
+      availableOffers: this._data.offerData.get(checkedType),
+      isAvailableOffers: !!this._data.offerData.get(checkedType).length,
     });
   }
 
