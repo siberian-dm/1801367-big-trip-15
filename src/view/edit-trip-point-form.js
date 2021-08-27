@@ -176,6 +176,11 @@ export default class EditPointForm extends SmartView {
     this.setRemoveComponentHandler(this._callback.removeComponent);
   }
 
+  removeElement() {
+    super.removeElement();
+    this._resetDatepicker();
+  }
+
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
@@ -189,6 +194,15 @@ export default class EditPointForm extends SmartView {
   setRemoveComponentHandler(callback) {
     this._callback.removeComponent = callback;
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._removeComponentHandler);
+  }
+
+  _resetDatepicker() {
+    for (const key of Object.keys(this._datepicker)) {
+      if (this._datepicker[key]) {
+        this._datepicker[key].destroy();
+        this._datepicker[key] = null;
+      }
+    }
   }
 
   _pointTypeCheckHandler(evt) {
@@ -272,7 +286,7 @@ export default class EditPointForm extends SmartView {
   _setDateFromDatepicker() {
     if (this._datepicker.dateFrom) {
       this._datepicker.dateFrom.destroy();
-      delete this._datepicker.dateFrom;
+      this._datepicker.dateFrom = null;
     }
 
     this._datepicker.dateFrom = flatpickr(
@@ -291,7 +305,7 @@ export default class EditPointForm extends SmartView {
   _setDateToDatepicker() {
     if (this._datepicker.dateTo) {
       this._datepicker.dateTo.destroy();
-      delete this._datepicker.dateTo;
+      this._datepicker.dateTo = null;
     }
 
     this._datepicker.dateTo = flatpickr(
