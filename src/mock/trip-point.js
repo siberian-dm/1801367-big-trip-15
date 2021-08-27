@@ -1,7 +1,10 @@
-import dayjs from 'dayjs';
 import {POINT_TYPE_BASE_PRICE} from './const';
 import {OFFER_TYPES, DESTINATIONS} from '../const';
 import {getRandomInteger} from './random';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 
 const generateTripPoint = (dateFrom, dateTo, index) => {
@@ -33,7 +36,7 @@ const createTripPointObjects = (objectsNumber) => {
       dateFrom = dateTo.add((dateTo - dateFrom) / oneMinute + getRandomInteger(20, 240), 'minute');
       dateTo = dateFrom.add(getRandomInteger(20, 720), 'minute');
     }
-    tripPointList.push(generateTripPoint(dateFrom, dateTo, i));
+    tripPointList.push(generateTripPoint(dateFrom.utc().format(), dateTo.utc().format(), i));
   }
 
   return tripPointList;

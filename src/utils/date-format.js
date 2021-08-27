@@ -1,4 +1,7 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 const MINUTE_TO_MS = 6e4;
 const HOUR_TO_MS = 3.6e6;
@@ -19,7 +22,7 @@ export const getHumanizeVisibleDateForInfo = (dateFrom, dateTo) => `${dayjs(date
 
 
 export const getHumanizeEventDuration = (dateFrom, dateTo) => {
-  const duration = dateTo - dateFrom;
+  const duration = dayjs(dateTo).diff(dayjs(dateFrom));
 
   const hours = Math.floor(duration / HOUR_TO_MS);
   const minutes = Math.floor(duration % HOUR_TO_MS / MINUTE_TO_MS);
@@ -34,3 +37,6 @@ export const getHumanizeEventDuration = (dateFrom, dateTo) => {
 
 
 export const getDateDiff = (dateA, dateB) => dayjs(dateA).diff(dayjs(dateB));
+
+
+export const getDateInUtc = (date) => dayjs.utc(date).format();
