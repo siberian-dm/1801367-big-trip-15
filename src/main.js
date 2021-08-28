@@ -1,4 +1,5 @@
 import TripPresenter from './presenter/trip';
+import PointsModel from './model/points';
 import {createTripPointObjects} from './mock/trip-point';
 
 const TRIP_POINT_COUNT = 15;
@@ -11,6 +12,8 @@ const menuContainer = mainContainer.querySelector('.trip-controls__navigation');
 const filtersContainer = mainContainer.querySelector('.trip-controls__filters');
 const pointsContainer = mainContainer.querySelector('.trip-events');
 
-const tripPresenter = new TripPresenter(infoContainer, menuContainer, filtersContainer, pointsContainer);
+const pointsModel = new PointsModel();
+pointsModel.setPoints(points);
 
-tripPresenter.init(points);
+const tripPresenter = new TripPresenter(pointsModel, infoContainer, menuContainer, filtersContainer, pointsContainer);
+tripPresenter.init();
