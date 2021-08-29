@@ -80,13 +80,6 @@ export default class Point {
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
-  _escKeyDownHandler(evt) {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      this._replaceFormToPoint();
-    }
-  }
-
   _handleSwtichToForm() {
     this._replacePointToForm();
   }
@@ -95,7 +88,8 @@ export default class Point {
     this._replaceFormToPoint();
   }
 
-  _handleFormSubmit() {
+  _handleFormSubmit(point) {
+    this._changeData(point);
     this._replaceFormToPoint();
   }
 
@@ -106,5 +100,12 @@ export default class Point {
 
   _handleFavoriteClick() {
     this._changeData(Object.assign({}, this._point, {isFavorite: !this._point.isFavorite}));
+  }
+
+  _escKeyDownHandler(evt) {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this._replaceFormToPoint();
+    }
   }
 }

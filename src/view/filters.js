@@ -22,7 +22,7 @@ const createFilterListTemplate = () => (
 );
 
 
-export default class FilterList extends AbstractView {
+export default class Filters extends AbstractView {
   getTemplate() {
     return createFilterListTemplate();
   }
