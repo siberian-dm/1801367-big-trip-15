@@ -1,7 +1,10 @@
 import SmartView from './smart';
 import {DESTINATIONS, OFFER_TYPES} from '../const';
-import {getHumanizeVisibleDateForForm} from '../utils/date-format';
+import {getHumanizeVisibleDateForForm, getDateInUtc} from '../utils/date-format';
 import {updateItem} from '../utils/common';
+import flatpickr from 'flatpickr';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 
 const createPointTypesTemplate = (types) =>
@@ -138,6 +141,7 @@ export default class EditPointForm extends SmartView {
   constructor(point) {
     super();
     this._data = EditPointForm.parseStateToData(point);
+    this._datepicker = {};
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._switchToPointHandler = this._switchToPointHandler.bind(this);
@@ -145,8 +149,18 @@ export default class EditPointForm extends SmartView {
     this._pointTypeCheckHandler = this._pointTypeCheckHandler.bind(this);
     this._offerCheckHandler = this._offerCheckHandler.bind(this);
     this._destinationChoiceHandler = this._destinationChoiceHandler.bind(this);
+    this._changeDateFromHandler = this._changeDateFromHandler.bind(this);
+    this._changeDateToHandler = this._changeDateToHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDateFromDatepicker();
+    this._setDateToDatepicker();
+  }
+
+  reset(point) {
+    this.updateData(
+      EditPointForm.parseStateToData(point),
+    );
   }
 
   getTemplate() {
@@ -155,9 +169,16 @@ export default class EditPointForm extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDateFromDatepicker();
+    this._setDateToDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setSwitchToPointHandler(this._callback.switchToPoint);
     this.setRemoveComponentHandler(this._callback.removeComponent);
+  }
+
+  removeElement() {
+    super.removeElement();
+    this._resetDatepicker();
   }
 
   setFormSubmitHandler(callback) {
@@ -173,6 +194,15 @@ export default class EditPointForm extends SmartView {
   setRemoveComponentHandler(callback) {
     this._callback.removeComponent = callback;
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._removeComponentHandler);
+  }
+
+  _resetDatepicker() {
+    for (const key of Object.keys(this._datepicker)) {
+      if (this._datepicker[key]) {
+        this._datepicker[key].destroy();
+        this._datepicker[key] = null;
+      }
+    }
   }
 
   _pointTypeCheckHandler(evt) {
@@ -198,6 +228,18 @@ export default class EditPointForm extends SmartView {
         destination: DESTINATIONS.find((point) => point.name === chosenCity),
       });
     }
+  }
+
+  _changeDateFromHandler([userDate]) {
+    this.updateData({
+      dateFrom: getDateInUtc(userDate),
+    });
+  }
+
+  _changeDateToHandler([userDate]) {
+    this.updateData({
+      dateTo: getDateInUtc(userDate),
+    });
   }
 
   _offerCheckHandler(evt) {
@@ -239,6 +281,44 @@ export default class EditPointForm extends SmartView {
         .querySelector('.event__available-offers')
         .addEventListener('change', this._offerCheckHandler);
     }
+  }
+
+  _setDateFromDatepicker() {
+    if (this._datepicker.dateFrom) {
+      this._datepicker.dateFrom.destroy();
+      this._datepicker.dateFrom = null;
+    }
+
+    this._datepicker.dateFrom = flatpickr(
+      this.getElement().querySelector('.event__input--time[name=event-start-time]'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        defaultDate: this._data.dateFrom,
+        onClose: this._changeDateFromHandler,
+      },
+    );
+  }
+
+  _setDateToDatepicker() {
+    if (this._datepicker.dateTo) {
+      this._datepicker.dateTo.destroy();
+      this._datepicker.dateTo = null;
+    }
+
+    this._datepicker.dateTo = flatpickr(
+      this.getElement().querySelector('.event__input--time[name=event-end-time]'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        defaultDate: this._data.dateTo,
+        onClose: this._changeDateToHandler,
+      },
+    );
   }
 
   static parsePointTypesToData(type, id) {
