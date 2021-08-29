@@ -2,7 +2,7 @@ import PointPresenter from './point';
 
 import InfoView from '../view/trip-info';
 import MenuView from '../view/menu';
-import FiltersView from '../view/filters';
+import FiltersView from '../view/filter';
 import SortView from '../view/sort';
 import PointsView from '../view/trip-points';
 import NoPointsView from '../view/no-trip-points';
@@ -10,14 +10,15 @@ import NoPointsView from '../view/no-trip-points';
 import {SortType, UserAction, UpdateType} from '../const';
 import {render, remove, RenderPosition} from '../utils/render';
 import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/sort';
+import {filterPoints} from '../utils/filter';
 
 
 export default class Trip {
-  constructor(pointsModel, infoContainer, menuContainer, filtersContainer, pointsContainer) {
+  constructor(infoContainer, menuContainer, pointsContainer, pointsModel, filterModel) {
     this._pointsModel = pointsModel;
+    this._filterModel = filterModel;
     this._infoContainer = infoContainer;
     this._menuContainer = menuContainer;
-    this._filtersContainer = filtersContainer;
     this._pointsContainer = pointsContainer;
     this._pointPresenter = new Map();
     this._currentSortType = SortType.DAY;
@@ -36,24 +37,28 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
     render(this._menuContainer, this._menuComponent);
-    render(this._filtersContainer, this._filtersComponent);
     render(this._pointsContainer, this._pointsComponent);
 
     this._renderTrip();
   }
 
   _getPoints() {
+    const filterType = this._filterModel.getFilter();
+    const points = this._pointsModel.getPoints();
+    const filtredPoints = filterPoints[filterType](points);
+
     switch (this._currentSortType) {
       case SortType.DAY:
-        return this._pointsModel.getPoints().slice().sort(sortPointDay);
+        return filtredPoints.sort(sortPointDay);
       case SortType.TIME:
-        return this._pointsModel.getPoints().slice().sort(sortPointTime);
+        return filtredPoints.sort(sortPointTime);
       case SortType.PRICE:
-        return this._pointsModel.getPoints().slice().sort(sortPointPrice);
+        return filtredPoints.sort(sortPointPrice);
     }
   }
 
@@ -62,7 +67,7 @@ export default class Trip {
       this._infoComponent !== null;
     }
 
-    this._infoComponent = new InfoView(this._pointsModel.getPoints());
+    this._infoComponent = new InfoView(this._getPoints());
     render(this._infoContainer, this._infoComponent, RenderPosition.AFTERBEGIN);
   }
 

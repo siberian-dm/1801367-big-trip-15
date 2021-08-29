@@ -27,7 +27,7 @@ const generateTripPoint = (dateFrom, dateTo, index) => {
 
 const createTripPointObjects = (objectsNumber) => {
   const oneMinute = 6e4;
-  let dateFrom = dayjs();
+  let dateFrom = dayjs().add(-4320, 'minute');
   let dateTo = dateFrom.add(getRandomInteger(20, 360), 'minute');
   const tripPointList = [];
 
