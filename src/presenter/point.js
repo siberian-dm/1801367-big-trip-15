@@ -1,10 +1,12 @@
 import PointView from '../view/trip-point';
 import EditPointFormView from '../view/edit-trip-point-form';
 import {replace, remove, render} from '../utils/render';
+import {UserAction, UpdateType} from '../const';
+import {isDatesEqual} from '../utils/date-format';
 
 const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
+  POINT: 'POINT',
+  FORM: 'FORM',
 };
 
 export default class Point {
@@ -15,7 +17,7 @@ export default class Point {
 
     this._pointComponent = null;
     this._editPointFormComponent = null;
-    this._mode = Mode.DEFAULT;
+    this._mode = Mode.POINT;
 
     this._handleSwtichToForm = this._handleSwtichToForm.bind(this);
     this._handleSwitchToPoint = this._handleSwitchToPoint.bind(this);
@@ -45,11 +47,11 @@ export default class Point {
       return;
     }
 
-    if (this._mode === Mode.DEFAULT) {
+    if (this._mode === Mode.POINT) {
       replace(this._pointComponent, prevPointComponent);
     }
 
-    if (this._mode === Mode.EDITING) {
+    if (this._mode === Mode.FORM) {
       replace(this._editPointFormComponent, prevEditPointFormComponent);
     }
 
@@ -58,11 +60,12 @@ export default class Point {
   }
 
   destroy() {
-    this._handleRemoveComponent();
+    remove(this._editPointFormComponent);
+    remove(this._pointComponent);
   }
 
-  resetView() {
-    if (this._mode !== Mode.DEFAULT) {
+  resetMode() {
+    if (this._mode !== Mode.POINT) {
       this._replaceFormToPoint();
     }
   }
@@ -70,13 +73,13 @@ export default class Point {
   _replacePointToForm() {
     replace(this._editPointFormComponent, this._pointComponent);
     this._changeMode();
-    this._mode = Mode.EDITING;
+    this._mode = Mode.FORM;
     document.addEventListener('keydown', this._escKeyDownHandler);
   }
 
   _replaceFormToPoint() {
     replace(this._pointComponent, this._editPointFormComponent);
-    this._mode = Mode.DEFAULT;
+    this._mode = Mode.POINT;
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
@@ -89,18 +92,32 @@ export default class Point {
     this._replaceFormToPoint();
   }
 
-  _handleFormSubmit(point) {
-    this._changeData(point);
+  _handleFormSubmit(update) {
+    const isMinorMajor =
+      !isDatesEqual(this._point.dateFrom, update.dateFrom) ||
+      !isDatesEqual(this._point.dateTo, update.dateTo);
+
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      isMinorMajor ? UpdateType.MAJOR : UpdateType.PATCH,
+      update,
+    );
+
     this._replaceFormToPoint();
   }
 
   _handleRemoveComponent() {
-    remove(this._editPointFormComponent);
-    remove(this._pointComponent);
+    this._changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MAJOR,
+      this._point,
+    );
   }
 
   _handleFavoriteClick() {
-    this._changeData(Object.assign({}, this._point, {isFavorite: !this._point.isFavorite}));
+    const point = Object.assign({}, this._point, {isFavorite: !this._point.isFavorite});
+
+    this._changeData(UserAction.UPDATE_POINT, UpdateType.PATCH, point);
   }
 
   _escKeyDownHandler(evt) {
