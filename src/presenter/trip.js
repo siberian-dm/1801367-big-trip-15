@@ -79,7 +79,7 @@ export default class Trip {
   }
 
   _renderNoPoints() {
-    this._noPointsComponent = new NoPointsView();
+    this._noPointsComponent = new NoPointsView(this._filterModel.getFilter());
     render(this._pointsComponent, this._noPointsComponent);
   }
 
@@ -91,16 +91,17 @@ export default class Trip {
   }
 
   _renderTrip() {
-    if (!this._pointsModel.getPoints().length) {
+    if (!this._getPoints().length) {
       this._renderNoPoints();
     }
+    else {
+      if (this._infoComponent === null) {
+        this._renderInfo();
+      }
 
-    if (this._infoComponent === null) {
-      this._renderInfo();
+      this._renderSort();
+      this._getPoints().forEach((point) => this._renderPoint(point));
     }
-
-    this._renderSort();
-    this._getPoints().forEach((point) => this._renderPoint(point));
   }
 
   _clearTrip({resetInfo = false, resetSortType = false} = {}) {
