@@ -101,8 +101,9 @@ const createEditPointFormTemplate = (data) => {
             <label class="event__label  event__type-output" for="event-destination-${id}">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${id}" 
-            type="text" name="event-destination" value="${isDestination ? destination.name : ''}" list="destination-list-${id}">
+            <input class="event__input  event__input--destination" id="event-destination-${id}"
+            type="text" name="event-destination" value="${isDestination ? destination.name : ''}"
+            list="destination-list-${id}" autocomplete="off" required>
             <datalist id="destination-list-${id}">
               ${cities.map((city) => `<option value="${city}"></option>`).join('')}
             </datalist>
@@ -110,11 +111,11 @@ const createEditPointFormTemplate = (data) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${id}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${id}" 
+            <input class="event__input  event__input--time" id="event-start-time-${id}"
             type="text" name="event-start-time" value="${getHumanizeVisibleDateForForm(dateFrom)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-${id}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${id}" 
+            <input class="event__input  event__input--time" id="event-end-time-${id}"
             type="text" name="event-end-time" value="${getHumanizeVisibleDateForForm(dateTo)}">
           </div>
 
@@ -123,7 +124,8 @@ const createEditPointFormTemplate = (data) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
+            <input class="event__input  event__input--price" id="event-price-${id}" type="text"
+            name="event-price" value="${basePrice}" autocomplete="off" required>
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -235,7 +237,12 @@ export default class EditPointForm extends SmartView {
   _destinationChoiceHandler(evt) {
     const destination = DESTINATIONS.find((dest) => dest.name === evt.target.value);
 
-    if (destination) {
+    if (!destination) {
+      evt.target.setCustomValidity('The city must match the value in the list.');
+    }
+    else {
+      evt.target.setCustomValidity('');
+
       const {description, pictures} = destination;
 
       this.updateData(
@@ -249,6 +256,8 @@ export default class EditPointForm extends SmartView {
         },
       );
     }
+
+    evt.target.reportValidity();
   }
 
   _changeDateFromHandler([userDate]) {
@@ -274,14 +283,25 @@ export default class EditPointForm extends SmartView {
   }
 
   _priceInputHandler(evt) {
-    this.updateData(
-      {
-        update: {
-          basePrice: +evt.target.value,
+    const re = /^[0-9]*$/;
+
+    if (!re.test(evt.target.value)) {
+      evt.target.setCustomValidity('Price can only be a positive integer!');
+    }
+    else {
+      evt.target.setCustomValidity('');
+
+      this.updateData(
+        {
+          update: {
+            basePrice: +evt.target.value,
+          },
+          isUpdateNow: false,
         },
-        isUpdateNow: false,
-      },
-    );
+      );
+    }
+
+    evt.target.reportValidity();
   }
 
   _offerCheckHandler(evt) {
@@ -300,6 +320,7 @@ export default class EditPointForm extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
+
     this._callback.formSubmit(EditPointForm.parseDataToState(this._data));
   }
 
@@ -378,6 +399,7 @@ export default class EditPointForm extends SmartView {
       const isChecked = offers.some((element) => element.title === offer.title);
       const titleFormated = `event-offer-${offer.title.toLowerCase().replace(/ /g, '-')}`;
       const offerId = `${titleFormated}-${id}`;
+
       return Object.assign({}, offer, {isChecked, titleFormated, id: offerId});
     });
   }
