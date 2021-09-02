@@ -4,7 +4,7 @@ import PointsModel from './model/points';
 import FilterModel from './model/filter';
 import {createTripPointObjects} from './mock/trip-point';
 
-const TRIP_POINT_COUNT = 15;
+const TRIP_POINT_COUNT = 10;
 
 const points = createTripPointObjects(TRIP_POINT_COUNT);
 
@@ -24,3 +24,8 @@ tripPresenter.init();
 
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel);
 filterPresenter.init();
+
+mainContainer.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  tripPresenter.createPoint();
+});

@@ -1,5 +1,6 @@
 import AbstractView from './abstract';
 import {getHumanizeVisibleDateForInfo} from '../utils/date-format';
+import {countOffersCost} from '../utils/common';
 
 const TRIP_POINT_TITLE_COUNT = 3;
 
@@ -7,18 +8,12 @@ const TRIP_POINT_TITLE_COUNT = 3;
 const createInfoTemplate = (points) => {
   const firstPoint = points[0];
   const lastPoint = points[points.length - 1];
-  const initialValue = 0;
 
   const infoTitle = points.length <= TRIP_POINT_TITLE_COUNT
     ? points.map((point) => point.destination.name).join(' &mdash; ')
     : `${firstPoint.destination.name} &mdash; ... &mdash; ${lastPoint.destination.name}`;
 
-  const tripCost = points.reduce((totalCost, point) => {
-    const {basePrice, offers} = point;
-    const offerCost = offers.reduce((cost, offer) => cost + offer.price, initialValue);
-
-    return totalCost + basePrice + offerCost;
-  }, initialValue);
+  const tripCost = points.reduce((cost, {basePrice, offers}) => cost + basePrice + countOffersCost(offers), 0);
 
   return (
     `<section class="trip-main__trip-info  trip-info">

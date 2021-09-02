@@ -962,41 +962,8 @@ export const DESTINATIONS = [
   },
   {
     'name': 'Madrid',
-    'description': 'Madrid, middle-eastern paradise, for those who value comfort and coziness.',
-    'pictures': [
-      {
-        'src': 'http://picsum.photos/300/200?r=0.2989558307423925',
-        'description': 'Madrid biggest supermarket',
-      },
-      {
-        'src': 'http://picsum.photos/300/200?r=0.38349506704621694',
-        'description': 'Madrid kindergarten',
-      },
-      {
-        'src': 'http://picsum.photos/300/200?r=0.128580024607571',
-        'description': 'Madrid city centre',
-      },
-      {
-        'src': 'http://picsum.photos/300/200?r=0.796289646036177',
-        'description': 'Madrid park',
-      },
-      {
-        'src': 'http://picsum.photos/300/200?r=0.08798486986510357',
-        'description': 'Madrid street market',
-      },
-      {
-        'src': 'http://picsum.photos/300/200?r=0.7958516162662075',
-        'description': 'Madrid central station',
-      },
-      {
-        'src': 'http://picsum.photos/300/200?r=0.14915718802652744',
-        'description': 'Madrid parliament building',
-      },
-      {
-        'src': 'http://picsum.photos/300/200?r=0.19249532377823542',
-        'description': 'Madrid biggest supermarket',
-      },
-    ],
+    'description': '',
+    'pictures': [],
   },
 ];
 
