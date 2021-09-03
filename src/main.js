@@ -25,7 +25,14 @@ tripPresenter.init();
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel);
 filterPresenter.init();
 
-mainContainer.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+const newPointButton = infoContainer.querySelector('.trip-main__event-add-btn');
+
+const handlePointNewFormClose = () => {
+  newPointButton.disabled = false;
+};
+
+newPointButton.addEventListener('click', (evt) => {
   evt.preventDefault();
-  tripPresenter.createPoint();
+  tripPresenter.createPoint(handlePointNewFormClose);
+  newPointButton.disabled = true;
 });

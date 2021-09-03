@@ -48,10 +48,10 @@ export default class Trip {
     this._renderTrip();
   }
 
-  createPoint() {
+  createPoint(callback) {
     this._currentSortType = SortType.DAY;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._pointNewPresenter.init();
+    this._pointNewPresenter.init(callback);
   }
 
   _getPoints() {
