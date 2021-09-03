@@ -283,7 +283,7 @@ export default class EditPointForm extends SmartView {
   }
 
   _priceInputHandler(evt) {
-    const re = /^[0-9]*$/;
+    const re = /^\d+$/;
 
     if (!re.test(evt.target.value)) {
       evt.target.setCustomValidity('Price can only be a positive integer!');
