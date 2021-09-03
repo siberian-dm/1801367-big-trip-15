@@ -94,7 +94,7 @@ export default class Point {
   }
 
   _handleFormSubmit(update) {
-    const isMajorChange =
+    const isMinorChange =
       !isDatesEqual(this._point.dateFrom, update.dateFrom) ||
       !isDatesEqual(this._point.dateTo, update.dateTo) ||
       this._point.basePrice !== update.basePrice ||
@@ -102,7 +102,7 @@ export default class Point {
 
     this._changeData(
       UserAction.UPDATE_POINT,
-      isMajorChange ? UpdateType.MAJOR : UpdateType.PATCH,
+      isMinorChange ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
 
@@ -112,7 +112,7 @@ export default class Point {
   _handleDeleteClick() {
     this._changeData(
       UserAction.DELETE_POINT,
-      UpdateType.MAJOR,
+      UpdateType.MINOR,
       this._point,
     );
   }
