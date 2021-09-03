@@ -3,7 +3,6 @@ import PointNewPresenter from './point-new';
 
 import InfoView from '../view/trip-info';
 import MenuView from '../view/menu';
-import FiltersView from '../view/filter';
 import SortView from '../view/sort';
 import PointsView from '../view/trip-points';
 import NoPointsView from '../view/no-trip-points';
@@ -29,7 +28,6 @@ export default class Trip {
     this._noPointsComponent = null;
 
     this._menuComponent = new MenuView();
-    this._filtersComponent = new FiltersView();
     this._pointsComponent = new PointsView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
