@@ -7,18 +7,17 @@ import SortView from '../view/sort';
 import PointsView from '../view/trip-points';
 import NoPointsView from '../view/no-trip-points';
 
-import {SortType, UserAction, UpdateType, FilterType} from '../const';
+import {SortType, UserAction, UpdateType} from '../const';
 import {render, remove, RenderPosition} from '../utils/render';
 import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/sort';
 import {filterPoints} from '../utils/filter';
 
 
 export default class Trip {
-  constructor(infoContainer, menuContainer, pointsContainer, pointsModel, filterModel) {
+  constructor(infoContainer, pointsContainer, pointsModel, filterModel) {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._infoContainer = infoContainer;
-    this._menuContainer = menuContainer;
     this._pointsContainer = pointsContainer;
     this._pointPresenter = new Map();
     this._currentSortType = SortType.DAY;
@@ -35,22 +34,29 @@ export default class Trip {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
     this._pointNewPresenter = new PointNewPresenter(this._pointsContainer, this._handleViewAction);
   }
 
   init() {
-    render(this._menuContainer, this._menuComponent);
     render(this._pointsContainer, this._pointsComponent);
 
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
+    this._renderInfo();
     this._renderTrip();
   }
 
+  destroy() {
+    this._clearTrip({resetInfo: true, resetSortType: true});
+
+    remove(this._pointsComponent);
+
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
   createPoint(callback) {
-    this._currentSortType = SortType.DAY;
-    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._pointNewPresenter.init(callback);
   }
 
@@ -71,7 +77,7 @@ export default class Trip {
 
   _renderInfo() {
     if (this._infoComponent !== null) {
-      this._infoComponent !== null;
+      return;
     }
 
     this._infoComponent = new InfoView(this._getPoints());
@@ -102,10 +108,6 @@ export default class Trip {
       this._renderNoPoints();
     }
     else {
-      if (this._infoComponent === null) {
-        this._renderInfo();
-      }
-
       this._renderSort();
       this._getPoints().forEach((point) => this._renderPoint(point));
     }
@@ -119,13 +121,14 @@ export default class Trip {
     remove(this._sortComponent);
     remove(this._noPointsComponent);
 
+    if (resetSortType) {
+      this._currentSortType = SortType.DAY;
+    }
+
     if (resetInfo) {
       remove(this._infoComponent);
       this._infoComponent = null;
-    }
-
-    if (resetSortType) {
-      this._currentSortType = SortType.DAY;
+      this._renderInfo();
     }
   }
 
