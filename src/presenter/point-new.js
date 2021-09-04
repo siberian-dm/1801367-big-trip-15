@@ -10,7 +10,6 @@ const NEW_POINT = {
   dateFrom: new Date(),
   dateTo: new Date(),
   destination: null,
-  id: nanoid(),
   isFavorite: false,
   offers: [],
   type: OFFER_TYPES.map((offer) => offer.type)[0],
@@ -37,7 +36,7 @@ export default class PointNew {
       return;
     }
 
-    this._pointEditComponent = new PointEditView({point: NEW_POINT, isNewPoint: true});
+    this._pointEditComponent = new PointEditView({point: Object.assign({}, NEW_POINT, {id: nanoid()}), isNewPoint: true});
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
