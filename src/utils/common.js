@@ -11,3 +11,5 @@ export const updateItem = (items, updatedItem) => {
     ...items.slice(index + 1),
   ];
 };
+
+export const countOffersCost = (offers) => offers.reduce((cost, offer) => cost + offer.price, 0);

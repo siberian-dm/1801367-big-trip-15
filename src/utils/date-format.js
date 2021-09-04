@@ -40,3 +40,9 @@ export const getDateDiff = (dateA, dateB) => dayjs(dateA).diff(dayjs(dateB));
 
 
 export const getDateInUtc = (date) => dayjs.utc(date).format();
+
+
+export const isDatesEqual = (dateA, dateB) => dayjs(dateA).isSame(dateB);
+
+
+export const isFutureDate = (date) => dayjs().isBefore(date);

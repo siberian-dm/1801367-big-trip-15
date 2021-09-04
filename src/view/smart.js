@@ -17,7 +17,7 @@ export default class Smart extends Abstract {
     parent.replaceChild(newElement, prevElement);
   }
 
-  updateData(update) {
+  updateData({update, isUpdateNow}) {
     if (!update) {
       return;
     }
@@ -28,8 +28,10 @@ export default class Smart extends Abstract {
       update,
     );
 
-    this.updateElement();
-    this.restoreHandlers();
+    if (isUpdateNow) {
+      this.updateElement();
+      this.restoreHandlers();
+    }
   }
 
   restoreHandlers() {
