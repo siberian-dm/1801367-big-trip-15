@@ -1,10 +1,12 @@
 import AbstractObserver from './abstract-observer.js';
 import {FilterType} from '../const.js';
+import {filterPoints} from '../utils/filter.js';
 
 export default class Filter extends AbstractObserver {
-  constructor() {
+  constructor(pointsModel) {
     super();
     this._activeFilter = FilterType.EVERYTHING;
+    this._pointsModel = pointsModel;
   }
 
   setFilter(updateType, filter) {
@@ -14,5 +16,11 @@ export default class Filter extends AbstractObserver {
 
   getFilter() {
     return this._activeFilter;
+  }
+
+  getFilteredPoints() {
+    const points = this._pointsModel.getPoints();
+
+    return filterPoints[this.getFilter()](points);
   }
 }
