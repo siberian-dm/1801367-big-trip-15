@@ -16,6 +16,7 @@ export default class Trip {
     this._pointPresenter = new Map();
 
     this._noPointsComponent = null;
+    this._pointsContainerComponent = null;
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -25,6 +26,10 @@ export default class Trip {
   }
 
   init() {
+    if (this._pointsContainerComponent !== null) {
+      this._clearTrip();
+    }
+
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
     this._sortModel.addObserver(this._handleModelEvent);
