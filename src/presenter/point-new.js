@@ -17,8 +17,7 @@ const NEW_POINT = {
 
 
 export default class PointNew {
-  constructor(pointsContainer, changeData) {
-    this._pointsContainer = pointsContainer;
+  constructor(changeData) {
     this._changeData = changeData;
 
     this._pointEditComponent = null;
@@ -29,7 +28,7 @@ export default class PointNew {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init(callback) {
+  init(container, callback) {
     this._destroyCallback = callback;
 
     if (this._pointEditComponent !== null) {
@@ -40,7 +39,7 @@ export default class PointNew {
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
-    render(this._pointsContainer, this._pointEditComponent, RenderPosition.AFTERBEGIN);
+    render(container, this._pointEditComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this._escKeyDownHandler);
   }
