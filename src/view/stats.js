@@ -1,4 +1,5 @@
-import SmartView from './smart';
+import AbstractView from './abstract';
+import {getDateDiff, getHumanizeEventDuration} from '../utils/date-format';
 
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -6,14 +7,14 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 const BAR_HEIGHT = 55;
 
 
-const createMoneyChartTemplate = (moneyCtx) => (
+const createChartTemplate = (moneyCtx, {title, labels, data, formatter}) => (
   new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: ['TAXI', 'BUS', 'TRAIN', 'SHIP', 'TRANSPORT', 'DRIVE'],
+      labels,
       datasets: [{
-        data: [400, 300, 200, 160, 150, 100],
+        data,
         backgroundColor: '#ffffff',
         hoverBackgroundColor: '#ffffff',
         anchor: 'start',
@@ -28,146 +29,12 @@ const createMoneyChartTemplate = (moneyCtx) => (
           color: '#000000',
           anchor: 'end',
           align: 'start',
-          formatter: (val) => `€ ${val}`,
+          formatter,
         },
       },
       title: {
         display: true,
-        text: 'MONEY',
-        fontColor: '#000000',
-        fontSize: 23,
-        position: 'left',
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: '#000000',
-            padding: 5,
-            fontSize: 13,
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-          barThickness: 44,
-        }],
-        xAxes: [{
-          ticks: {
-            display: false,
-            beginAtZero: true,
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-          minBarLength: 50,
-        }],
-      },
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        enabled: false,
-      },
-    },
-  }));
-
-
-const createTypeChartTemplate = (typeCtx) => (
-  new Chart(typeCtx, {
-    plugins: [ChartDataLabels],
-    type: 'horizontalBar',
-    data: {
-      labels: ['TAXI', 'BUS', 'TRAIN', 'SHIP', 'TRANSPORT', 'DRIVE'],
-      datasets: [{
-        data: [4, 3, 2, 1, 1, 1],
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
-        anchor: 'start',
-      }],
-    },
-    options: {
-      plugins: {
-        datalabels: {
-          font: {
-            size: 13,
-          },
-          color: '#000000',
-          anchor: 'end',
-          align: 'start',
-          formatter: (val) => `${val}x`,
-        },
-      },
-      title: {
-        display: true,
-        text: 'TYPE',
-        fontColor: '#000000',
-        fontSize: 23,
-        position: 'left',
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: '#000000',
-            padding: 5,
-            fontSize: 13,
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-          barThickness: 44,
-        }],
-        xAxes: [{
-          ticks: {
-            display: false,
-            beginAtZero: true,
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-          minBarLength: 50,
-        }],
-      },
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        enabled: false,
-      },
-    },
-  }));
-
-
-const createTimeChartTemplate = (timeCtx) => (
-  new Chart(timeCtx, {
-    plugins: [ChartDataLabels],
-    type: 'horizontalBar',
-    data: {
-      labels: ['TAXI', 'BUS', 'TRAIN', 'SHIP', 'TRANSPORT', 'DRIVE'],
-      datasets: [{
-        data: [4, 3, 10, 4, 6, 8],
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
-        anchor: 'start',
-      }],
-    },
-    options: {
-      plugins: {
-        datalabels: {
-          font: {
-            size: 13,
-          },
-          color: '#000000',
-          anchor: 'end',
-          align: 'start',
-          formatter: (val) => `${val}H`,
-        },
-      },
-      title: {
-        display: true,
-        text: 'TIME-SPEND',
+        text: title,
         fontColor: '#000000',
         fontSize: 23,
         position: 'left',
@@ -225,61 +92,110 @@ const createStatsTemplate = () => (
   </section>`
 );
 
-export default class Stats extends SmartView {
+
+export default class Stats extends AbstractView {
   constructor(points) {
     super();
 
-    this._moneyChart = null;
-    this._typeChart = null;
-    this._timeChart = null;
+    this._chart = {};
 
-    this._points = points;
+    this._data = Stats.parsePointsToData(points);
 
     this._setCharts();
-  }
-
-  _setCharts() {
-    if (this._moneyChart !== null || this._typeChart !== null || this._timeChart !== null) {
-      this._moneyCart = null;
-      this._typeChart = null;
-      this._timeChart = null;
-    }
-
-    const moneyCtx = this.getElement().querySelector('#money');
-    const typeCtx = this.getElement().querySelector('#type');
-    const timeCtx = this.getElement().querySelector('#time-spend');
-
-    this._moneyChart = this._renderMoneyChart(moneyCtx, this._points);
-    this._typeChart = this._renderTypeChart(typeCtx, this._points);
-    this._timeChart = this._renderTimeChart(timeCtx, this._points);
   }
 
   removeElement() {
     super.removeElement();
 
-    if (this._moneyChart !== null || this._typeChart !== null || this._timeChart !== null) {
-      this._moneyChart = null;
-      this._typeChart = null;
-      this._timeChart = null;
-    }
+    this._clearCharts();
   }
 
   getTemplate() {
     return createStatsTemplate();
   }
 
-  _renderMoneyChart(moneyCtx, points) {
-    moneyCtx.height = BAR_HEIGHT * 5;
-    createMoneyChartTemplate(moneyCtx, points);
+  _setCharts() {
+    this._clearCharts();
+
+    const moneyCtx = this.getElement().querySelector('#money');
+    const typeCtx = this.getElement().querySelector('#type');
+    const timeCtx = this.getElement().querySelector('#time-spend');
+
+    this._chart.moneyChart = this._renderChart(moneyCtx, this._data.money);
+    this._chart.typeChart = this._renderChart(typeCtx, this._data.type);
+    this._chart.timeSpendChart = this._renderChart(timeCtx, this._data.timeSpend);
   }
 
-  _renderTypeChart(typeCtx, points) {
-    typeCtx.height = BAR_HEIGHT * 5;
-    createTypeChartTemplate(typeCtx, points);
+  _renderChart(container, data) {
+    container.height = BAR_HEIGHT * data.labels.length;
+    createChartTemplate(container, data);
   }
 
-  _renderTimeChart(timeCtx, points) {
-    timeCtx.height = BAR_HEIGHT * 5;
-    createTimeChartTemplate(timeCtx, points);
+  _clearCharts() {
+    for (let chart of Object.values(this._chart)) {
+      if (chart !== null) {
+        chart = null;
+      }
+    }
+  }
+
+  static parsePointsToData(points) {
+    const pointTypes = new Set(points.map(({type}) => type));
+    const moneyData = Array.from(pointTypes)
+      .map((pointType) => (
+        {
+          type: pointType.toUpperCase(),
+          totalCost: points.reduce((cost, {basePrice, type}) => (
+            type === pointType ? cost + basePrice : cost + 0
+          ), 0),
+        }
+      ));
+
+    moneyData.sort((itemA, itemB) => itemB.totalCost - itemA.totalCost);
+
+    const typeData = Array.from(pointTypes)
+      .map((pointType) => (
+        {
+          type: pointType.toUpperCase(),
+          totalTimes: points.reduce((times, {type}) => (
+            type === pointType ? times + 1 : times + 0
+          ), 0),
+        }
+      ));
+
+    typeData.sort((itemA, itemB) => itemB.totalTimes - itemA.totalTimes);
+
+    const timeSpendData = Array.from(pointTypes)
+      .map((pointType) => (
+        {
+          type: pointType.toUpperCase(),
+          totalDuration: points.reduce((duration, {dateFrom, dateTo, type}) => (
+            type === pointType ? duration + getDateDiff(dateTo, dateFrom) : duration + 0
+          ), 0),
+        }
+      ));
+
+    timeSpendData.sort((itemA, itemB) => itemB.totalDuration - itemA.totalDuration);
+
+    return {
+      money: {
+        title: 'MONEY',
+        labels: moneyData.map(({type}) => type),
+        data: moneyData.map(({totalCost}) => totalCost),
+        formatter: (val) => `€ ${val}`,
+      },
+      type: {
+        title: 'TYPE',
+        labels: typeData.map(({type}) => type),
+        data: typeData.map(({totalTimes}) => totalTimes),
+        formatter: (val) => `${val}x`,
+      },
+      timeSpend: {
+        title: 'TIME-SPEND',
+        labels: timeSpendData.map(({type}) => type),
+        data: timeSpendData.map(({totalDuration}) => totalDuration),
+        formatter: (val) => getHumanizeEventDuration(val),
+      },
+    };
   }
 }
