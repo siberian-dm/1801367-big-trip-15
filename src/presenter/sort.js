@@ -3,12 +3,12 @@ import {remove, render, RenderPosition, replace} from '../utils/render.js';
 import {UpdateType} from '../const.js';
 
 export default class Sort {
-  constructor(sortContainer, pointsModel, filterModel, sortModel) {
-    this._sortContainer = sortContainer;
+  constructor(container, pointsModel, filterModel, sortModel) {
+    this._container = container;
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._sortModel = sortModel;
-    this._sortComponent = null;
+    this._component = null;
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -25,20 +25,20 @@ export default class Sort {
       return;
     }
 
-    const prevSortComponent = this._sortComponent;
+    const prevComponent = this._component;
 
-    this._sortComponent = new SortView(this._sortModel.getSort());
+    this._component = new SortView(this._sortModel.getSort());
 
-    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+    this._component.setSortTypeChangeHandler(this._handleSortTypeChange);
 
-    if (prevSortComponent === null) {
-      render(this._sortContainer, this._sortComponent, RenderPosition.BEFOREEND);
+    if (prevComponent === null) {
+      render(this._container, this._component, RenderPosition.BEFOREEND);
 
       return;
     }
 
-    replace(this._sortComponent, prevSortComponent);
-    remove(prevSortComponent);
+    replace(this._component, prevComponent);
+    remove(prevComponent);
   }
 
   destroy() {
@@ -46,8 +46,8 @@ export default class Sort {
     this._filterModel.removeObserver(this._handleModelEvent);
     this._sortModel.removeObserver(this._handleModelEvent);
 
-    remove(this._sortComponent);
-    this._sortComponent = null;
+    remove(this._component);
+    this._component = null;
   }
 
   _handleModelEvent(updateType) {

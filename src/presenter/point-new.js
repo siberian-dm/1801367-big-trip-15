@@ -1,4 +1,4 @@
-import PointEditView from '../view/edit-trip-point';
+import PointEditView from '../view/point-edit';
 
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
@@ -20,7 +20,7 @@ export default class PointNew {
   constructor(changeData) {
     this._changeData = changeData;
 
-    this._pointEditComponent = null;
+    this._component = null;
     this._destroyCallback = null;
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
@@ -31,21 +31,21 @@ export default class PointNew {
   init(container, callback) {
     this._destroyCallback = callback;
 
-    if (this._pointEditComponent !== null) {
+    if (this._component !== null) {
       return;
     }
 
-    this._pointEditComponent = new PointEditView({point: Object.assign({}, NEW_POINT, {id: nanoid()}), isNewPoint: true});
-    this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
+    this._component = new PointEditView({point: Object.assign({}, NEW_POINT, {id: nanoid()}), isNewPoint: true});
+    this._component.setFormSubmitHandler(this._handleFormSubmit);
+    this._component.setDeleteClickHandler(this._handleDeleteClick);
 
-    render(container, this._pointEditComponent, RenderPosition.AFTERBEGIN);
+    render(container, this._component, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this._escKeyDownHandler);
   }
 
   destroy() {
-    if (this._pointEditComponent === null) {
+    if (this._component === null) {
       return;
     }
 
@@ -53,8 +53,8 @@ export default class PointNew {
       this._destroyCallback();
     }
 
-    remove(this._pointEditComponent);
-    this._pointEditComponent = null;
+    remove(this._component);
+    this._component = null;
 
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
