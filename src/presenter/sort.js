@@ -3,23 +3,22 @@ import {remove, render, RenderPosition, replace} from '../utils/render.js';
 import {UpdateType} from '../const.js';
 
 export default class Sort {
-  constructor(container, pointsModel, filterModel, sortModel) {
+  constructor(container, model) {
     this._container = container;
-    this._pointsModel = pointsModel;
-    this._filterModel = filterModel;
-    this._sortModel = sortModel;
+    this._model = model;
     this._component = null;
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
+
+    this._model.points.addObserver(this._handleModelEvent);
+    this._model.filter.addObserver(this._handleModelEvent);
+    this._model.sort.addObserver(this._handleModelEvent);
+    this._model.menu.addObserver(this._handleModelEvent);
   }
 
   init() {
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-    this._sortModel.addObserver(this._handleModelEvent);
-
-    if (!this._sortModel.getSortedPoints().length) {
+    if (!this._model.sort.getSortedPoints().length) {
       this.destroy();
 
       return;
@@ -27,7 +26,7 @@ export default class Sort {
 
     const prevComponent = this._component;
 
-    this._component = new SortView(this._sortModel.getSort());
+    this._component = new SortView(this._model.sort.getSort());
 
     this._component.setSortTypeChangeHandler(this._handleSortTypeChange);
 
@@ -41,11 +40,7 @@ export default class Sort {
     remove(prevComponent);
   }
 
-  destroy() {
-    this._pointsModel.removeObserver(this._handleModelEvent);
-    this._filterModel.removeObserver(this._handleModelEvent);
-    this._sortModel.removeObserver(this._handleModelEvent);
-
+  _destroy() {
     remove(this._component);
     this._component = null;
   }
@@ -54,15 +49,19 @@ export default class Sort {
     switch (updateType) {
       case UpdateType.MINOR:
       case UpdateType.MAJOR:
+      case UpdateType.TABLE_SHOW:
         this.init();
+        break;
+      case UpdateType.STATS_SHOW:
+        this._destroy();
     }
   }
 
   _handleSortTypeChange(sortType) {
-    if (this._sortModel.getSort() === sortType) {
+    if (this._model.sort.getSort() === sortType) {
       return;
     }
 
-    this._sortModel.setSort(UpdateType.MINOR, sortType);
+    this._model.sort.setSort(UpdateType.MINOR, sortType);
   }
 }

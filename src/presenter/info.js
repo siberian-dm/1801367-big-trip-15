@@ -1,43 +1,41 @@
-import InfoView from '../view/trip-info.js';
+import InfoView from '../view/info.js';
 import {remove, render, RenderPosition, replace} from '../utils/render.js';
 import { UpdateType } from '../const.js';
 
 
 export default class Info {
-  constructor(infoContainer, pointsModel, filterModel) {
-    this._infoContainer = infoContainer;
-    this._filterModel = filterModel;
-    this._pointsModel = pointsModel;
-    this._infoComponent = null;
+  constructor(container, model) {
+    this._container = container;
+    this._model = model;
+    this._component = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
+    this._model.points.addObserver(this._handleModelEvent);
   }
 
   init() {
-    const points = this._filterModel.getFilteredPoints();
+    const points = this._model.points.getPoints();
 
     if (!points.length) {
-      remove(this._infoComponent);
-      this._infoComponent = null;
+      remove(this._component);
+      this._component = null;
 
       return;
     }
 
-    const prevInfoComponent = this._infoComponent;
+    const prevComponent = this._component;
 
-    this._infoComponent = new InfoView(points);
+    this._component = new InfoView(points);
 
-    if (prevInfoComponent === null) {
-      render(this._infoContainer, this._infoComponent, RenderPosition.AFTERBEGIN);
+    if (prevComponent === null) {
+      render(this._container, this._component, RenderPosition.AFTERBEGIN);
 
       return;
     }
 
-    replace(this._infoComponent, prevInfoComponent);
-    remove(prevInfoComponent);
+    replace(this._component, prevComponent);
+    remove(prevComponent);
   }
 
   _handleModelEvent(updateType) {

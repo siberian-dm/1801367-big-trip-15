@@ -1,18 +1,16 @@
 import PointPresenter from './point';
 import PointNewPresenter from './point-new';
-import PointsView from '../view/trip-points';
-import NoPointsView from '../view/no-trip-points';
+import PointsContainerView from '../view/points-container';
+import NoPointsView from '../view/no-points';
 
-import {UserAction, UpdateType, FilterType, SortType} from '../const';
+import {UserAction, UpdateType, FilterType, SortType, Status} from '../const';
 import {render, remove, replace, RenderPosition} from '../utils/render';
 
 
 export default class Trip {
-  constructor(pointsContainer, pointsModel, filterModel, sortModel) {
-    this._pointsModel = pointsModel;
-    this._filterModel = filterModel;
-    this._sortModel = sortModel;
-    this._pointsContainer = pointsContainer;
+  constructor(tripContainer, model) {
+    this._tripContainer = tripContainer;
+    this._model = model;
     this._pointPresenter = new Map();
 
     this._noPointsComponent = null;
@@ -22,23 +20,25 @@ export default class Trip {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
 
+    this._model.points.addObserver(this._handleModelEvent);
+    this._model.filter.addObserver(this._handleModelEvent);
+    this._model.sort.addObserver(this._handleModelEvent);
+    this._model.menu.addObserver(this._handleModelEvent);
+    this._model.pointNewButton.addObserver(this._handleModelEvent);
+
     this._pointNewPresenter = new PointNewPresenter(this._handleViewAction);
   }
 
   init() {
     if (this._pointsContainerComponent !== null) {
-      this._clearTrip();
+      this._destroy();
     }
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-    this._sortModel.addObserver(this._handleModelEvent);
+    this._pointsContainerComponent = new PointsContainerView();
 
-    this._pointsContainerComponent = new PointsView();
+    render(this._tripContainer, this._pointsContainerComponent, RenderPosition.BEFOREEND);
 
-    render(this._pointsContainer, this._pointsContainerComponent, RenderPosition.BEFOREEND);
-
-    const points = this._sortModel.getSortedPoints();
+    const points = this._model.sort.getSortedPoints();
 
     if (this._noPointsComponent !== null) {
       remove(this._noPointsComponent);
@@ -53,27 +53,23 @@ export default class Trip {
     }
   }
 
-  destroy() {
-    this._pointsModel.removeObserver(this._handleModelEvent);
-    this._filterModel.removeObserver(this._handleModelEvent);
-    this._sortModel.removeObserver(this._handleModelEvent);
+  _createPoint() {
+    const destroyCallback = () => (
+      this._model.pointNewButton.setStatus(UpdateType.NEW_POINT_FORM_DESTROY, Status.ENABLED)
+    );
 
-    this._clearTrip();
-  }
-
-  createPoint(callback) {
-    if (this._sortModel.getSort() !== SortType.DAY) {
-      this._sortModel.setSort(UpdateType.MINOR, SortType.DAY);
+    if (this._model.sort.getSort() !== SortType.DAY) {
+      this._model.sort.setSort(UpdateType.MINOR, SortType.DAY);
     }
 
-    if (this._filterModel.getFilter() !== FilterType.EVERYTHING) {
-      this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    if (this._model.filter.getFilter() !== FilterType.EVERYTHING) {
+      this._model.filter.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     }
 
-    this._pointNewPresenter.init(this._pointsContainerComponent, callback);
+    this._pointNewPresenter.init(this._pointsContainerComponent, destroyCallback);
   }
 
-  _clearTrip() {
+  _destroy() {
     this._pointNewPresenter.destroy();
     this._pointPresenter.forEach((presenter) => presenter.destroy());
     this._pointPresenter.clear();
@@ -85,7 +81,7 @@ export default class Trip {
   _renderNoPoints() {
     const prevNoPointsComponent = this._noPointsComponent;
 
-    this._noPointsComponent = new NoPointsView(this._filterModel.getFilter());
+    this._noPointsComponent = new NoPointsView(this._model.filter.getFilter());
 
     if (prevNoPointsComponent === null) {
       render(this._pointsContainerComponent, this._noPointsComponent);
@@ -107,13 +103,13 @@ export default class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._pointsModel.updatePoint(updateType, update);
+        this._model.points.updatePoint(updateType, update);
         break;
       case UserAction.ADD_POINT:
-        this._pointsModel.addPoint(updateType, update);
+        this._model.points.addPoint(updateType, update);
         break;
       case UserAction.DELETE_POINT:
-        this._pointsModel.deletePoint(updateType, update);
+        this._model.points.deletePoint(updateType, update);
         break;
     }
   }
@@ -125,8 +121,18 @@ export default class Trip {
         break;
       case UpdateType.MINOR:
       case UpdateType.MAJOR:
-        this._clearTrip();
+        this._destroy();
         this.init();
+        break;
+      case UpdateType.STATS_SHOW:
+        this._destroy();
+        break;
+      case UpdateType.TABLE_SHOW:
+        this.init();
+        break;
+      case UpdateType.NEW_POINT_FORM_SHOW:
+        this._createPoint();
+        break;
     }
   }
 

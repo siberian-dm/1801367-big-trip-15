@@ -983,6 +983,10 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  TABLE_SHOW: 'TABLE_SHOW',
+  STATS_SHOW: 'STATS_SHOW',
+  NEW_POINT_FORM_SHOW: 'NEW_POINT_FORM_SHOW',
+  NEW_POINT_FORM_DESTROY: 'NEW_POINT_FORM_DESTROY',
 };
 
 export const FilterType = {
@@ -991,8 +995,12 @@ export const FilterType = {
   PAST: 'past',
 };
 
-
 export const MenuItem = {
   TABLE: 'Table',
   STATS: 'Stats',
+};
+
+export const Status = {
+  ENABLED: 'enabled',
+  DISABLED: 'disabled',
 };
