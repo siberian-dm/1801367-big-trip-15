@@ -1,16 +1,18 @@
-import MenuView from './view/menu';
-import StatsView from './view/stats';
 import InfoPresenter from './presenter/info';
+import PointNewButtonPresenter from './presenter/point-new-button';
+import MenuPresenter from './presenter/menu';
 import FilterPresenter from './presenter/filter';
 import SortPresenter from './presenter/sort';
 import TripPresenter from './presenter/trip';
+import StatsPresenter from './presenter/stats';
+
 import PointsModel from './model/points';
 import FilterModel from './model/filter';
+import MenuModel from './model/menu';
+import PointNewButtonModel from './model/point-new-button';
 import SortModel from './model/sort';
-import {createTripPointObjects} from './mock/trip-point';
-import {remove, render} from './utils/render';
-import {MenuItem, UpdateType, FilterType} from './const';
 
+import {createTripPointObjects} from './mock/trip-point';
 
 const TRIP_POINT_COUNT = 8;
 
@@ -22,60 +24,33 @@ const menuContainer = mainContainer.querySelector('.trip-controls__navigation');
 const filtersContainer = mainContainer.querySelector('.trip-controls__filters');
 const pointsContainer = mainContainer.querySelector('.trip-events');
 
-const pointsModel = new PointsModel();
-pointsModel.setPoints(points);
+const model = {
+  points: new PointsModel(),
+};
 
-const filterModel = new FilterModel(pointsModel);
+model.points.setPoints(points);
+model.filter = new FilterModel(model.points);
+model.sort = new SortModel(model.filter);
+model.menu = new MenuModel();
+model.pointNewButton = new PointNewButtonModel();
 
-const sortModel = new SortModel(filterModel);
-
-const infoPresenter = new InfoPresenter(infoContainer, pointsModel, filterModel);
+const infoPresenter = new InfoPresenter(infoContainer, model);
 infoPresenter.init();
 
-const filterPresenter = new FilterPresenter(filtersContainer, filterModel);
+const pointNewButtonPresenter = new PointNewButtonPresenter(infoContainer, model);
+pointNewButtonPresenter.init();
+
+const menuPresenter = new MenuPresenter(menuContainer, model);
+menuPresenter.init();
+
+const filterPresenter = new FilterPresenter(filtersContainer, model);
 filterPresenter.init();
 
-const sortPresenter = new SortPresenter(pointsContainer, pointsModel, filterModel, sortModel);
+const sortPresenter = new SortPresenter(pointsContainer, model);
 sortPresenter.init();
 
-const tripPresenter = new TripPresenter(pointsContainer, pointsModel, filterModel, sortModel);
+const tripPresenter = new TripPresenter(pointsContainer, model);
 tripPresenter.init();
 
-const menuComponent = new MenuView();
-render(menuContainer, menuComponent);
-
-const statsComponent = new StatsView();
-
-
-const handleMenuClick = (menuItem) => {
-  switch (menuItem) {
-    case MenuItem.TABLE:
-      remove(statsComponent);
-      sortPresenter.init();
-      tripPresenter.init();
-      break;
-    case MenuItem.STATS:
-      filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-      tripPresenter.destroy();
-      sortPresenter.destroy();
-      render(pointsContainer, statsComponent);
-      break;
-  }
-};
-
-
-menuComponent.setMenuClickHandler(handleMenuClick);
-
-const newPointButton = infoContainer.querySelector('.trip-main__event-add-btn');
-
-
-const handlePointNewFormClose = () => {
-  newPointButton.disabled = false;
-};
-
-
-newPointButton.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  tripPresenter.createPoint(handlePointNewFormClose);
-  newPointButton.disabled = true;
-});
+const statsPresenter = new StatsPresenter(pointsContainer, model);
+statsPresenter.init();
