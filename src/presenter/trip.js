@@ -131,6 +131,7 @@ export default class Trip {
         this.init();
         break;
       case UpdateType.NEW_POINT_FORM_SHOW:
+        this._handleModeChange();
         this._createPoint();
         break;
     }
