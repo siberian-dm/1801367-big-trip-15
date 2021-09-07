@@ -3,21 +3,21 @@ import {remove, render, RenderPosition, replace} from '../utils/render.js';
 import {UpdateType} from '../const.js';
 
 export default class Filter {
-  constructor(container, filterModel) {
+  constructor(container, model) {
     this._container = container;
-    this._filterModel = filterModel;
+    this._model = model;
     this._component = null;
 
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
-    this._filterModel.addObserver(this._handleModelEvent);
+    this._model.filter.addObserver(this._handleModelEvent);
   }
 
   init() {
     const prevComponent = this._component;
 
-    this._component = new FilterView(this._filterModel.getFilter());
+    this._component = new FilterView(this._model.filter.getFilter(), this._model.filter.getStatus());
 
     this._component.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
@@ -36,10 +36,10 @@ export default class Filter {
   }
 
   _handleFilterTypeChange(filterType) {
-    if (this._filterModel.getFilter() === filterType) {
+    if (this._model.filter.getFilter() === filterType) {
       return;
     }
 
-    this._filterModel.setFilter(UpdateType.MINOR, filterType);
+    this._model.filter.setFilter(UpdateType.MINOR, filterType);
   }
 }

@@ -1,11 +1,12 @@
 import AbstractObserver from './abstract-observer.js';
-import {FilterType} from '../const.js';
+import {FilterType, Status} from '../const.js';
 import {filterPoints} from '../utils/filter.js';
 
 export default class Filter extends AbstractObserver {
   constructor(pointsModel) {
     super();
     this._activeFilter = FilterType.EVERYTHING;
+    this._status = Status.ENABLED;
     this._pointsModel = pointsModel;
   }
 
@@ -16,6 +17,15 @@ export default class Filter extends AbstractObserver {
 
   getFilter() {
     return this._activeFilter;
+  }
+
+  setStatus(updateType, status) {
+    this._status = status;
+    this._notify(updateType, status);
+  }
+
+  getStatus() {
+    return this._status;
   }
 
   getFilteredPoints() {
