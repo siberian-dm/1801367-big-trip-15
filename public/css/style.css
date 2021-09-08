@@ -95,6 +95,10 @@ main {
     left: 130px;
     width: 2px;
     background-color: rgba(255, 255, 255, 0.58); }
+  
+  .page-body__container--vertical-line-hidden::after {
+    display: none;
+  }
 
 .page-body__page-main {
   -ms-flex-positive: 1;

@@ -1,5 +1,5 @@
-import PointView from '../view/trip-point';
-import PointEditView from '../view/edit-trip-point';
+import PointView from '../view/point';
+import PointEditView from '../view/point-edit';
 import {replace, remove, render} from '../utils/render';
 import {UserAction, UpdateType} from '../const';
 import {isDatesEqual} from '../utils/date-format';

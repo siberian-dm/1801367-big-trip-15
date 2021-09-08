@@ -144,10 +144,10 @@ const createEditPointFormTemplate = (data) => {
 };
 
 
-export default class EditPointForm extends SmartView {
+export default class PointEditForm extends SmartView {
   constructor({point, isNewPoint}) {
     super();
-    this._data = EditPointForm.parseStateToData(point, isNewPoint);
+    this._data = PointEditForm.parseStateToData(point, isNewPoint);
     this._datepicker = {};
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
@@ -167,7 +167,7 @@ export default class EditPointForm extends SmartView {
 
   reset(point) {
     this.updateData(
-      EditPointForm.parseStateToData(point),
+      PointEditForm.parseStateToData(point),
     );
   }
 
@@ -218,7 +218,7 @@ export default class EditPointForm extends SmartView {
     const updatePointTypes = this._data.pointTypes.map((point) => (
       Object.assign({}, point, {isChecked: point.type === checkedType})
     ));
-    const availableOffers = EditPointForm.parseOffersToData([], checkedType, this._data.id);
+    const availableOffers = PointEditForm.parseOffersToData([], checkedType, this._data.id);
 
     this.updateData(
       {
@@ -321,7 +321,7 @@ export default class EditPointForm extends SmartView {
   _formSubmitHandler(evt) {
     evt.preventDefault();
 
-    this._callback.formSubmit(EditPointForm.parseDataToState(this._data));
+    this._callback.formSubmit(PointEditForm.parseDataToState(this._data));
   }
 
   _switchToPointHandler(evt) {
@@ -425,7 +425,7 @@ export default class EditPointForm extends SmartView {
       }
     ));
 
-    const availableOffers = EditPointForm.parseOffersToData(offers, type, id);
+    const availableOffers = PointEditForm.parseOffersToData(offers, type, id);
 
     return Object.assign(
       {},

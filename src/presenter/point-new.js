@@ -1,4 +1,4 @@
-import PointEditView from '../view/edit-trip-point';
+import PointEditView from '../view/point-edit';
 
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
@@ -10,7 +10,6 @@ const NEW_POINT = {
   dateFrom: new Date(),
   dateTo: new Date(),
   destination: null,
-  id: nanoid(),
   isFavorite: false,
   offers: [],
   type: OFFER_TYPES.map((offer) => offer.type)[0],
@@ -18,11 +17,10 @@ const NEW_POINT = {
 
 
 export default class PointNew {
-  constructor(pointsContainer, changeData) {
-    this._pointsContainer = pointsContainer;
+  constructor(changeData) {
     this._changeData = changeData;
 
-    this._pointEditComponent = null;
+    this._component = null;
     this._destroyCallback = null;
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
@@ -30,24 +28,24 @@ export default class PointNew {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init(callback) {
+  init(container, callback) {
     this._destroyCallback = callback;
 
-    if (this._pointEditComponent !== null) {
+    if (this._component !== null) {
       return;
     }
 
-    this._pointEditComponent = new PointEditView({point: NEW_POINT, isNewPoint: true});
-    this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
+    this._component = new PointEditView({point: Object.assign({}, NEW_POINT, {id: nanoid()}), isNewPoint: true});
+    this._component.setFormSubmitHandler(this._handleFormSubmit);
+    this._component.setDeleteClickHandler(this._handleDeleteClick);
 
-    render(this._pointsContainer, this._pointEditComponent, RenderPosition.AFTERBEGIN);
+    render(container, this._component, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this._escKeyDownHandler);
   }
 
   destroy() {
-    if (this._pointEditComponent === null) {
+    if (this._component === null) {
       return;
     }
 
@@ -55,8 +53,8 @@ export default class PointNew {
       this._destroyCallback();
     }
 
-    remove(this._pointEditComponent);
-    this._pointEditComponent = null;
+    remove(this._component);
+    this._component = null;
 
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }

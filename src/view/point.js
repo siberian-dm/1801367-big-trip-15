@@ -1,5 +1,5 @@
 import AbstractView from './abstract';
-import {getHumanizeDate, getHumanizeVisibleDate, getHumanizeEventTime, getHumanizeEventDuration} from '../utils/date-format';
+import {getHumanizeDate, getHumanizeVisibleDate, getHumanizeEventTime, getHumanizeEventDuration, getDateDiff} from '../utils/date-format';
 
 
 const createSelectedOffersTemplate = (offers) =>
@@ -28,7 +28,7 @@ const createPointTemplate = (point) => {
             &mdash;
             <time class="event__end-time" datetime="${dateTo}">${getHumanizeEventTime(dateTo)}</time>
           </p>
-          <p class="event__duration">${getHumanizeEventDuration(dateFrom, dateTo)}</p>
+          <p class="event__duration">${getHumanizeEventDuration( getDateDiff(dateTo, dateFrom) )}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>

@@ -1,0 +1,19 @@
+import AbstractObserver from './abstract-observer.js';
+import {MenuItem} from '../const.js';
+
+
+export default class Menu extends AbstractObserver {
+  constructor() {
+    super();
+    this._activeMenuItem = MenuItem.TABLE;
+  }
+
+  setMenuItem(updateType, menuItem) {
+    this._activeMenuItem = menuItem;
+    this._notify(updateType, menuItem);
+  }
+
+  getMenuItem() {
+    return this._activeMenuItem;
+  }
+}

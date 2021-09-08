@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import duration from 'dayjs/plugin/duration';
 
 dayjs.extend(utc);
+dayjs.extend(duration);
 
-const MINUTE_TO_MS = 6e4;
-const HOUR_TO_MS = 3.6e6;
 
 export const getHumanizeDate = (date) => dayjs(date).format('YYYY-MM-DD');
 
@@ -21,16 +21,12 @@ export const getHumanizeVisibleDateForForm = (date) => dayjs(date).format('DD/MM
 export const getHumanizeVisibleDateForInfo = (dateFrom, dateTo) => `${dayjs(dateFrom).format('D MMM')}&nbsp;&mdash;&nbsp;${dayjs(dateTo).format('D MMM')}`;
 
 
-export const getHumanizeEventDuration = (dateFrom, dateTo) => {
-  const duration = dayjs(dateTo).diff(dayjs(dateFrom));
+export const getHumanizeEventDuration = (milliseconds) => {
+  const days = dayjs.duration(milliseconds).format('DD');
+  const hours = dayjs.duration(milliseconds).format('HH');
+  const minutes = dayjs.duration(milliseconds).format('mm');
 
-  const hours = Math.floor(duration / HOUR_TO_MS);
-  const minutes = Math.floor(duration % HOUR_TO_MS / MINUTE_TO_MS);
-
-  const hoursToString = (hours > 0 && hours < 10) ? `0${hours}H` : `${hours}H`;
-  const minutesToString = (minutes > 0 && minutes < 10) ? `0${minutes}M` : `${minutes}M`;
-
-  const humanizeEventDuration = hours === 0 ? minutesToString : `${hoursToString} ${minutesToString}`;
+  const humanizeEventDuration = `${days === '00' ? '' : `${days}D`} ${days === '00' && hours === '00' ? '' : `${hours}H`} ${minutes}M`;
 
   return humanizeEventDuration;
 };
