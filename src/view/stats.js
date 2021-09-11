@@ -1,5 +1,5 @@
 import AbstractView from './abstract';
-import {getDateDiff, getHumanizeEventDuration} from '../utils/date-format';
+import {getDateDiff, getHumanizeEventDuration} from '../utils/date';
 
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
