@@ -1,5 +1,5 @@
 import AbstractObserver from './abstract-observer.js';
-import {FilterType, Status} from '../const.js';
+import {FilterType, Status} from '../utils/const.js';
 import {filterPoints} from '../utils/filter.js';
 
 export default class Filter extends AbstractObserver {

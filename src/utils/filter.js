@@ -1,5 +1,5 @@
-import {FilterType} from '../const';
-import {isFutureDate} from './date-format';
+import {FilterType} from './const';
+import {isFutureDate} from './date';
 
 export const filterPoints = {
   [FilterType.EVERYTHING]: (points) => points.slice(),

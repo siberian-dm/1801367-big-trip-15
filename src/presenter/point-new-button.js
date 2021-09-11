@@ -1,6 +1,6 @@
 import PointNewButtonView from '../view/point-new-button.js';
 import {remove, render, RenderPosition, replace} from '../utils/render.js';
-import {UpdateType, Status} from '../const.js';
+import {UpdateType, Status} from '../utils/const.js';
 
 
 export default class PointNewButton {
