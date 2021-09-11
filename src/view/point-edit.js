@@ -1,5 +1,5 @@
 import SmartView from './smart';
-import {getHumanizeVisibleDateForForm, getDateInUtc} from '../utils/date';
+import {getHumanizeVisibleDateForForm, getDateInUtc, getDateDiff} from '../utils/date';
 import {updateItem} from '../utils/common';
 import flatpickr from 'flatpickr';
 
@@ -277,6 +277,14 @@ export default class PointEditForm extends SmartView {
         isUpdateNow: false,
       },
     );
+
+    if (getDateDiff(this._data.dateFrom, this._data.dateTo) > 0) {
+      this._data.dateTo = this._data.dateFrom;
+    }
+
+    this._datepicker.dateTo.destroy();
+    this._datepicker.dateTo = null;
+    this._setDateToDatepicker();
   }
 
   _changeDateToHandler([userDate]) {
@@ -373,8 +381,7 @@ export default class PointEditForm extends SmartView {
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        // eslint-disable-next-line camelcase
-        time_24hr: true,
+        ['time_24hr']: true,
         defaultDate: this._data.dateFrom,
         onClose: this._changeDateFromHandler,
       },
@@ -391,9 +398,9 @@ export default class PointEditForm extends SmartView {
       this.getElement().querySelector('.event__input--time[name=event-end-time]'),
       {
         enableTime: true,
+        minDate: this._data.dateFrom,
         dateFormat: 'd/m/y H:i',
-        // eslint-disable-next-line camelcase
-        time_24hr: true,
+        ['time_24hr']: true,
         defaultDate: this._data.dateTo,
         onClose: this._changeDateToHandler,
       },
