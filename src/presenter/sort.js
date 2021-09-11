@@ -1,6 +1,6 @@
 import SortView from '../view/sort.js';
 import {remove, render, RenderPosition, replace} from '../utils/render.js';
-import {UpdateType} from '../const.js';
+import {UpdateType} from '../utils/const.js';
 
 export default class Sort {
   constructor(container, model) {
@@ -19,7 +19,7 @@ export default class Sort {
 
   init() {
     if (!this._model.sort.getSortedPoints().length) {
-      this.destroy();
+      this._destroy();
 
       return;
     }
@@ -47,6 +47,7 @@ export default class Sort {
 
   _handleModelEvent(updateType) {
     switch (updateType) {
+      case UpdateType.INIT:
       case UpdateType.MINOR:
       case UpdateType.MAJOR:
       case UpdateType.TABLE_SHOW:
