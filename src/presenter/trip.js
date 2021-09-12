@@ -5,7 +5,7 @@ import PointsContainerView from '../view/points-container';
 import NoPointsView from '../view/no-points';
 import LoadingView from '../view/loading';
 
-import {UserAction, UpdateType, FilterType, SortType, Status} from '../utils/const';
+import {UserAction, UpdateType, FilterType, SortType, Status, State} from '../utils/const';
 import {render, remove, replace, RenderPosition} from '../utils/render';
 
 
@@ -118,19 +118,34 @@ export default class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._api.updatePoint(update).then((response) => {
-          this._model.points.updatePoint(updateType, response);
-        });
+        this._pointPresenter.get(update.id).setViewState(State.SAVING);
+        this._api.updatePoint(update)
+          .then((response) => {
+            this._model.points.updatePoint(updateType, response);
+          })
+          .catch(() => {
+            this._pointPresenter.get(update.id).setViewState(State.ABORTING);
+          });
         break;
       case UserAction.ADD_POINT:
-        this._api.addPoint(update).then((response) => {
-          this._model.points.addPoint(updateType, response);
-        });
+        this._pointNewPresenter.setSaving();
+        this._api.addPoint(update)
+          .then((response) => {
+            this._model.points.addPoint(updateType, response);
+          })
+          .catch(() => {
+            this._pointNewPresenter.setAborting();
+          });
         break;
       case UserAction.DELETE_POINT:
-        this._api.deletePoint(update).then(() => {
-          this._model.points.deletePoint(updateType, update);
-        });
+        this._pointPresenter.get(update.id).setViewState(State.DELETING);
+        this._api.deletePoint(update)
+          .then(() => {
+            this._model.points.deletePoint(updateType, update);
+          })
+          .catch(() => {
+            this._pointPresenter.get(update.id).setViewState(State.ABORTING);
+          });
         break;
     }
   }

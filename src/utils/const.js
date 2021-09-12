@@ -36,3 +36,9 @@ export const Status = {
   ENABLED: 'enabled',
   DISABLED: 'disabled',
 };
+
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+};
