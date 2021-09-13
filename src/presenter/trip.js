@@ -65,6 +65,8 @@ export default class Trip {
   }
 
   _createPoint() {
+    this._pointPresenter.forEach((presenter) => presenter.resetMode());
+
     const destroyCallback = () => (
       this._model.pointNewButton.setStatus(UpdateType.NEW_POINT_FORM_DESTROY, Status.ENABLED)
     );
@@ -172,7 +174,6 @@ export default class Trip {
         this.init();
         break;
       case UpdateType.NEW_POINT_FORM_SHOW:
-        this._handleModeChange();
         this._createPoint();
         break;
     }
