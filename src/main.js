@@ -17,7 +17,7 @@ import SortModel from './model/sort';
 import Api from './utils/api';
 import {UpdateType} from './utils/const';
 
-const AUTHORIZATION = 'Basic hS2sd66hjklgatetros';
+const AUTHORIZATION = 'Basic hS2sd66hjklgatepeRos';
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip/';
 
 const mainContainer = document.querySelector('.page-body');
