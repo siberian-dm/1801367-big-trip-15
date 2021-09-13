@@ -1,7 +1,7 @@
 import PointView from '../view/point';
 import PointEditView from '../view/point-edit';
 import {replace, remove, render} from '../utils/render';
-import {UserAction, UpdateType} from '../utils/const';
+import {UserAction, UpdateType, State} from '../utils/const';
 import {isDatesEqual} from '../utils/date';
 import {countOffersCost} from '../utils/common';
 
@@ -9,6 +9,7 @@ const Mode = {
   POINT: 'POINT',
   FORM: 'FORM',
 };
+
 
 export default class Point {
   constructor(container, changeData, changeMode, model) {
@@ -54,7 +55,8 @@ export default class Point {
     }
 
     if (this._mode === Mode.FORM) {
-      replace(this._pointEditComponent, prevPointEditComponent);
+      replace(this._pointComponent, prevPointEditComponent);
+      this._mode = Mode.POINT;
     }
 
     remove(prevPointComponent);
@@ -68,7 +70,56 @@ export default class Point {
 
   resetMode() {
     if (this._mode !== Mode.POINT) {
+      this._pointEditComponent.reset(this._point);
       this._replaceFormToPoint();
+    }
+  }
+
+  setViewState(state) {
+    if (this._mode === Mode.POINT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this._pointEditComponent.updateData(
+        {
+          update: {
+            isDisabled: false,
+            isSaving: false,
+            isDeleting: false,
+          },
+          isUpdateNow: true,
+        },
+      );
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._pointEditComponent.updateData(
+          {
+            update: {
+              isDisabled: true,
+              isSaving: true,
+            },
+            isUpdateNow: true,
+          },
+        );
+        break;
+      case State.DELETING:
+        this._pointEditComponent.updateData(
+          {
+            update: {
+              isDisabled: true,
+              isDeleting: true,
+            },
+            isUpdateNow: true,
+          },
+        );
+        break;
+      case State.ABORTING:
+        this._pointComponent.shake(resetFormState);
+        this._pointEditComponent.shake(resetFormState);
+        break;
     }
   }
 
@@ -106,8 +157,6 @@ export default class Point {
       isMinorChange ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-
-    this._replaceFormToPoint();
   }
 
   _handleDeleteClick() {

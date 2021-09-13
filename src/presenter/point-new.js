@@ -59,6 +59,35 @@ export default class PointNew {
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._component.updateData(
+      {
+        update: {
+          isDisabled: true,
+          isSaving: true,
+        },
+        isUpdateNow: true,
+      },
+    );
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._component.updateData(
+        {
+          update: {
+            isDisabled: false,
+            isSaving: false,
+            isDeleting: false,
+          },
+          isUpdateNow: true,
+        },
+      );
+    };
+
+    this._component.shake(resetFormState);
+  }
+
   _handleFormSubmit(point) {
     delete point.id;
 
@@ -67,8 +96,6 @@ export default class PointNew {
       UpdateType.MAJOR,
       point,
     );
-
-    this.destroy();
   }
 
   _handleDeleteClick() {
