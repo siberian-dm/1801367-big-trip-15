@@ -136,9 +136,8 @@ const createEditPointFormTemplate = (data) => {
       if (isNewPoint) {
         return 'Cancel';
       }
-      else {
-        return isDeleting ? 'Deleting...' : 'Delete';
-      }
+
+      return isDeleting ? 'Deleting...' : 'Delete';
     })()}
           </button>
           <button class="event__rollup-btn" ${isNewPoint ? 'style="display: none;"' : ''} type="button" ${isDisabled ? 'disabled' : ''}>
