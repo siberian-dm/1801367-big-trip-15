@@ -1,6 +1,7 @@
 import InfoView from '../view/info.js';
 import {remove, render, RenderPosition, replace} from '../utils/render.js';
 import {UpdateType} from '../utils/const.js';
+import {sortPointDay} from '../utils/sort';
 
 
 export default class Info {
@@ -15,7 +16,7 @@ export default class Info {
   }
 
   init() {
-    const points = this._model.points.getPoints();
+    const points = this._model.points.getPoints().slice().sort(sortPointDay);
 
     if (!points.length) {
       remove(this._component);
