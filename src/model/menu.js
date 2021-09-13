@@ -1,5 +1,5 @@
 import AbstractObserver from './abstract-observer.js';
-import {MenuItem} from '../const.js';
+import {MenuItem} from '../utils/const.js';
 
 
 export default class Menu extends AbstractObserver {

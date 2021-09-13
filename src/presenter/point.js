@@ -1,8 +1,8 @@
 import PointView from '../view/point';
 import PointEditView from '../view/point-edit';
 import {replace, remove, render} from '../utils/render';
-import {UserAction, UpdateType} from '../const';
-import {isDatesEqual} from '../utils/date-format';
+import {UserAction, UpdateType} from '../utils/const';
+import {isDatesEqual} from '../utils/date';
 import {countOffersCost} from '../utils/common';
 
 const Mode = {
@@ -11,10 +11,11 @@ const Mode = {
 };
 
 export default class Point {
-  constructor(container, changeData, changeMode) {
+  constructor(container, changeData, changeMode, model) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._model = model;
 
     this._pointComponent = null;
     this._pointEditComponent = null;
@@ -35,7 +36,7 @@ export default class Point {
     const prevPointEditComponent = this._pointEditComponent;
 
     this._pointComponent = new PointView(this._point);
-    this._pointEditComponent = new PointEditView({point: this._point, isNewPoint: false});
+    this._pointEditComponent = new PointEditView({point: this._point, isNewPoint: false}, this._model);
 
     this._pointComponent.setSwitchToFormHandler(this._handleSwtichToForm);
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);

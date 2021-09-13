@@ -1,8 +1,7 @@
 import PointEditView from '../view/point-edit';
 
 import {remove, render, RenderPosition} from '../utils/render.js';
-import {UserAction, UpdateType} from '../const.js';
-import {OFFER_TYPES} from '../const.js';
+import {UserAction, UpdateType} from '../utils/const.js';
 import {nanoid} from 'nanoid';
 
 const NEW_POINT = {
@@ -12,13 +11,14 @@ const NEW_POINT = {
   destination: null,
   isFavorite: false,
   offers: [],
-  type: OFFER_TYPES.map((offer) => offer.type)[0],
+  type: 'taxi',
 };
 
 
 export default class PointNew {
-  constructor(changeData) {
+  constructor(changeData, model) {
     this._changeData = changeData;
+    this._model = model;
 
     this._component = null;
     this._destroyCallback = null;
@@ -35,7 +35,7 @@ export default class PointNew {
       return;
     }
 
-    this._component = new PointEditView({point: Object.assign({}, NEW_POINT, {id: nanoid()}), isNewPoint: true});
+    this._component = new PointEditView({point: Object.assign({}, NEW_POINT, {id: nanoid()}), isNewPoint: true}, this._model);
     this._component.setFormSubmitHandler(this._handleFormSubmit);
     this._component.setDeleteClickHandler(this._handleDeleteClick);
 
@@ -60,11 +60,14 @@ export default class PointNew {
   }
 
   _handleFormSubmit(point) {
+    delete point.id;
+
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MAJOR,
       point,
     );
+
     this.destroy();
   }
 

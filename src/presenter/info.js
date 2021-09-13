@@ -1,6 +1,6 @@
 import InfoView from '../view/info.js';
 import {remove, render, RenderPosition, replace} from '../utils/render.js';
-import { UpdateType } from '../const.js';
+import {UpdateType} from '../utils/const.js';
 
 
 export default class Info {
@@ -40,6 +40,7 @@ export default class Info {
 
   _handleModelEvent(updateType) {
     switch (updateType) {
+      case UpdateType.INIT:
       case UpdateType.MINOR:
       case UpdateType.MAJOR:
         this.init();

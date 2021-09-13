@@ -1,5 +1,5 @@
 import StatsView from '../view/stats.js';
-import {MenuItem, UpdateType} from '../const.js';
+import {MenuItem, UpdateType} from '../utils/const.js';
 import {remove, render, replace} from '../utils/render.js';
 
 

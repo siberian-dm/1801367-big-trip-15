@@ -1,6 +1,5 @@
 import SmartView from './smart';
-import {DESTINATIONS, OFFER_TYPES} from '../const';
-import {getHumanizeVisibleDateForForm, getDateInUtc} from '../utils/date-format';
+import {getHumanizeVisibleDateForForm, getDateInUtc, getDateDiff} from '../utils/date';
 import {updateItem} from '../utils/common';
 import flatpickr from 'flatpickr';
 
@@ -145,9 +144,10 @@ const createEditPointFormTemplate = (data) => {
 
 
 export default class PointEditForm extends SmartView {
-  constructor({point, isNewPoint}) {
+  constructor({point, isNewPoint}, model) {
     super();
-    this._data = PointEditForm.parseStateToData(point, isNewPoint);
+    this._model = model;
+    this._data = PointEditForm.parseStateToData(point, model, isNewPoint);
     this._datepicker = {};
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
@@ -167,7 +167,10 @@ export default class PointEditForm extends SmartView {
 
   reset(point) {
     this.updateData(
-      PointEditForm.parseStateToData(point),
+      {
+        update: PointEditForm.parseStateToData(point, this._model),
+        isUpdateNow: true,
+      },
     );
   }
 
@@ -218,7 +221,12 @@ export default class PointEditForm extends SmartView {
     const updatePointTypes = this._data.pointTypes.map((point) => (
       Object.assign({}, point, {isChecked: point.type === checkedType})
     ));
-    const availableOffers = PointEditForm.parseOffersToData([], checkedType, this._data.id);
+    const availableOffers = PointEditForm.parseOffersToData(
+      [],
+      checkedType,
+      this._data.id,
+      this._model.offers.getOffers(),
+    );
 
     this.updateData(
       {
@@ -235,7 +243,7 @@ export default class PointEditForm extends SmartView {
   }
 
   _destinationChoiceHandler(evt) {
-    const destination = DESTINATIONS.find((dest) => dest.name === evt.target.value);
+    const destination = this._data.destinations.find((dest) => dest.name === evt.target.value);
 
     if (!destination) {
       evt.target.setCustomValidity('The city must match the value in the list.');
@@ -269,6 +277,14 @@ export default class PointEditForm extends SmartView {
         isUpdateNow: false,
       },
     );
+
+    if (getDateDiff(this._data.dateFrom, this._data.dateTo) > 0) {
+      this._data.dateTo = this._data.dateFrom;
+    }
+
+    this._datepicker.dateTo.destroy();
+    this._datepicker.dateTo = null;
+    this._setDateToDatepicker();
   }
 
   _changeDateToHandler([userDate]) {
@@ -365,8 +381,7 @@ export default class PointEditForm extends SmartView {
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        // eslint-disable-next-line camelcase
-        time_24hr: true,
+        ['time_24hr']: true,
         defaultDate: this._data.dateFrom,
         onClose: this._changeDateFromHandler,
       },
@@ -383,17 +398,17 @@ export default class PointEditForm extends SmartView {
       this.getElement().querySelector('.event__input--time[name=event-end-time]'),
       {
         enableTime: true,
+        minDate: this._data.dateFrom,
         dateFormat: 'd/m/y H:i',
-        // eslint-disable-next-line camelcase
-        time_24hr: true,
+        ['time_24hr']: true,
         defaultDate: this._data.dateTo,
         onClose: this._changeDateToHandler,
       },
     );
   }
 
-  static parseOffersToData(offers, type, id) {
-    const availableOffers = OFFER_TYPES.find((offerType) => offerType.type === type).offers;
+  static parseOffersToData(offers, type, id, offerTypes) {
+    const availableOffers = offerTypes.find((offerType) => offerType.type === type).offers;
 
     return availableOffers.map((offer) => {
       const isChecked = offers.some((element) => element.title === offer.title);
@@ -404,10 +419,12 @@ export default class PointEditForm extends SmartView {
     });
   }
 
-  static parseStateToData(point, isNewPoint) {
+  static parseStateToData(point, model, isNewPoint = false) {
     const {destination, offers, type, id} = point;
 
-    const cities = DESTINATIONS.map((city) => city.name);
+    const destinations = model.destinations.getDestinations();
+
+    const cities = destinations.map((city) => city.name);
 
     let description = null;
     let pictures = [];
@@ -417,7 +434,9 @@ export default class PointEditForm extends SmartView {
       pictures = destination.pictures;
     }
 
-    const pointTypes = OFFER_TYPES.map((offer) => (
+    const offerTypes = model.offers.getOffers();
+
+    const pointTypes = offerTypes.map((offer) => (
       {
         type: offer.type,
         id: `event-type-${offer.type}-${id}`,
@@ -425,7 +444,7 @@ export default class PointEditForm extends SmartView {
       }
     ));
 
-    const availableOffers = PointEditForm.parseOffersToData(offers, type, id);
+    const availableOffers = PointEditForm.parseOffersToData(offers, type, id, offerTypes);
 
     return Object.assign(
       {},
@@ -433,6 +452,7 @@ export default class PointEditForm extends SmartView {
       {
         cities,
         pointTypes,
+        destinations,
         availableOffers,
         isAvailableOffers: !!availableOffers.length,
         isDescription: !!description || !!pictures.length,
@@ -450,6 +470,7 @@ export default class PointEditForm extends SmartView {
 
     delete data.cities;
     delete data.pointTypes;
+    delete data.destinations;
     delete data.availableOffers;
     delete data.isAvailableOffers;
     delete data.isDescription;

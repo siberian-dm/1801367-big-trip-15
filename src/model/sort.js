@@ -1,5 +1,5 @@
 import AbstractObserver from './abstract-observer.js';
-import {SortType} from '../const.js';
+import {SortType} from '../utils/const.js';
 import {sortPointDay, sortPointTime, sortPointPrice} from '../utils/sort.js';
 
 

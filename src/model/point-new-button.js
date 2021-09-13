@@ -1,5 +1,5 @@
 import AbstractObserver from './abstract-observer.js';
-import {Status} from '../const.js';
+import {Status} from '../utils/const.js';
 
 
 export default class PointNewButton extends AbstractObserver {

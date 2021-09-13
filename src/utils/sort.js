@@ -1,4 +1,4 @@
-import {getDateDiff} from './date-format';
+import {getDateDiff} from './date';
 
 export const sortPointDay = (pointA, pointB) => getDateDiff(pointA.dateFrom, pointB.dateFrom);
 

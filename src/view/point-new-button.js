@@ -1,8 +1,8 @@
 import AbstractView from './abstract';
-import {Status} from '../const';
+import {Status} from '../utils/const';
 
 const createButtonTemplate = (status) => (
-  `<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" 
+  `<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow"
   type="button" ${status === Status.DISABLED ? 'disabled' : ''}>New event</button>`
 );
 

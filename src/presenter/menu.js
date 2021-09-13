@@ -1,6 +1,6 @@
 import MenuView from '../view/menu.js';
 import {remove, render, RenderPosition, replace} from '../utils/render.js';
-import {UpdateType, MenuItem, Status } from '../const.js';
+import {UpdateType, MenuItem, Status} from '../utils/const.js';
 
 const verticalLines = document.querySelectorAll('.page-body__container');
 
@@ -43,7 +43,7 @@ export default class Menu {
     switch (menuItem) {
       case MenuItem.TABLE:
         this._model.menu.setMenuItem(UpdateType.TABLE_SHOW, menuItem);
-        this._model.filter.setStatus(UpdateType.STATS_SHOW, Status.ENABLED);
+        this._model.filter.setStatus(UpdateType.TABLE_SHOW, Status.ENABLED);
         this._model.pointNewButton.setStatus(UpdateType.TABLE_SHOW, Status.ENABLED);
         verticalLines.forEach((line) => line.classList.remove('page-body__container--vertical-line-hidden'));
         break;
