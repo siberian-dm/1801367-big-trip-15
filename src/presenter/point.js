@@ -1,5 +1,5 @@
 import PointView from '../view/point';
-import PointEditView from '../view/point-edit';
+import PointEditFormView from '../view/point-edit-form';
 import {replace, remove, render} from '../utils/render';
 import {UserAction, UpdateType, State} from '../utils/const';
 import {isDatesEqual} from '../utils/date';
@@ -37,7 +37,7 @@ export default class Point {
     const prevPointEditComponent = this._pointEditComponent;
 
     this._pointComponent = new PointView(this._point);
-    this._pointEditComponent = new PointEditView({point: this._point, isNewPoint: false}, this._model);
+    this._pointEditComponent = new PointEditFormView({point: this._point, isNewPoint: false}, this._model);
 
     this._pointComponent.setSwitchToFormHandler(this._handleSwtichToForm);
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -77,6 +77,10 @@ export default class Point {
 
   setViewState(state) {
     if (this._mode === Mode.POINT) {
+      if (state === State.ABORTING) {
+        this._pointComponent.shake(() => this.init(this._point));
+      }
+
       return;
     }
 
@@ -119,6 +123,7 @@ export default class Point {
       case State.ABORTING:
         this._pointComponent.shake(resetFormState);
         this._pointEditComponent.shake(resetFormState);
+        document.addEventListener('keydown', this._escKeyDownHandler);
         break;
     }
   }
@@ -157,6 +162,8 @@ export default class Point {
       isMinorChange ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
+
+    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
   _handleDeleteClick() {
@@ -165,6 +172,8 @@ export default class Point {
       UpdateType.MINOR,
       this._point,
     );
+
+    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
   _handleFavoriteClick() {

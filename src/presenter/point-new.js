@@ -1,4 +1,4 @@
-import PointEditView from '../view/point-edit';
+import PointEditFormView from '../view/point-edit-form';
 
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../utils/const.js';
@@ -35,7 +35,14 @@ export default class PointNew {
       return;
     }
 
-    this._component = new PointEditView({point: Object.assign({}, NEW_POINT, {id: nanoid()}), isNewPoint: true}, this._model);
+    this._component = new PointEditFormView(
+      {
+        point: Object.assign({}, NEW_POINT, {id: nanoid()}),
+        isNewPoint: true,
+      },
+      this._model,
+    );
+
     this._component.setFormSubmitHandler(this._handleFormSubmit);
     this._component.setDeleteClickHandler(this._handleDeleteClick);
 
@@ -69,6 +76,8 @@ export default class PointNew {
         isUpdateNow: true,
       },
     );
+
+    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
   setAborting() {
@@ -86,6 +95,7 @@ export default class PointNew {
     };
 
     this._component.shake(resetFormState);
+    document.addEventListener('keydown', this._escKeyDownHandler);
   }
 
   _handleFormSubmit(point) {
