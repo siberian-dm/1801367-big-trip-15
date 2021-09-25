@@ -73,3 +73,7 @@ tripPresenter.init();
 
 const statsPresenter = new StatsPresenter(pointsContainer, model);
 statsPresenter.init();
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});
