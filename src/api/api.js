@@ -11,6 +11,7 @@ const Url = {
   POINTS: 'points',
   OFFERS: 'offers',
   DESTINATIONS: 'destinations',
+  SYNC: 'points/sync',
 };
 
 
@@ -63,6 +64,16 @@ export default class Api {
     })
       .then(Api.toJSON)
       .then(PointsModel.adaptToClient);
+  }
+
+  sync(data) {
+    return this._load({
+      url: Url.SYNC,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON);
   }
 
   _load({
