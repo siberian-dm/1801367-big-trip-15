@@ -14,7 +14,7 @@ import MenuModel from './model/menu';
 import PointNewButtonModel from './model/point-new-button';
 import SortModel from './model/sort';
 
-import Api from './utils/api';
+import Api from './api/api';
 import {UpdateType} from './utils/const';
 
 const AUTHORIZATION = 'Basic hS22345235sd66hjklgatepeRos';
