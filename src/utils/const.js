@@ -42,3 +42,10 @@ export const State = {
   DELETING: 'DELETING',
   ABORTING: 'ABORTING',
 };
+
+export const Url = {
+  POINTS: 'points',
+  OFFERS: 'offers',
+  DESTINATIONS: 'destinations',
+  SYNC: 'points/sync',
+};

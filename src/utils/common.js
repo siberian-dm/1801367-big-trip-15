@@ -13,3 +13,5 @@ export const updateItem = (items, updatedItem) => {
 };
 
 export const countOffersCost = (offers) => offers.reduce((cost, offer) => cost + offer.price, 0);
+
+export const isOnline = () => window.navigator.onLine;

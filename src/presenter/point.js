@@ -3,7 +3,8 @@ import PointEditFormView from '../view/point-edit-form';
 import {replace, remove, render} from '../utils/render';
 import {UserAction, UpdateType, State} from '../utils/const';
 import {isDatesEqual} from '../utils/date';
-import {countOffersCost} from '../utils/common';
+import {countOffersCost, isOnline} from '../utils/common';
+import {toast} from '../utils/toast';
 
 const Mode = {
   POINT: 'POINT',
@@ -129,6 +130,11 @@ export default class Point {
   }
 
   _replacePointToForm() {
+    if (!isOnline()) {
+      toast('You can\'t edit point offline');
+      return;
+    }
+
     replace(this._pointEditComponent, this._pointComponent);
     this._changeMode();
     this._mode = Mode.FORM;
@@ -151,8 +157,14 @@ export default class Point {
   }
 
   _handleFormSubmit(update) {
-    const isMinorChange =
-      !isDatesEqual(this._point.dateFrom, update.dateFrom) ||
+    if (!isOnline()) {
+      toast('You can\'t save point offline');
+      this._pointEditComponent.shake();
+
+      return;
+    }
+
+    const isMinorChange = !isDatesEqual(this._point.dateFrom, update.dateFrom) ||
       !isDatesEqual(this._point.dateTo, update.dateTo) ||
       this._point.basePrice !== update.basePrice ||
       countOffersCost(this._point.offers) !== countOffersCost(update.offers);
@@ -167,6 +179,13 @@ export default class Point {
   }
 
   _handleDeleteClick() {
+    if (!isOnline()) {
+      toast('You can\'t delete point offline');
+      this._pointEditComponent.shake();
+
+      return;
+    }
+
     this._changeData(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,

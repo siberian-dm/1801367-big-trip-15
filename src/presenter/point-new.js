@@ -2,6 +2,8 @@ import PointEditFormView from '../view/point-edit-form';
 
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../utils/const.js';
+import {isOnline} from '../utils/common';
+import {toast} from '../utils/toast';
 import {nanoid} from 'nanoid';
 
 const NEW_POINT = {
@@ -99,6 +101,13 @@ export default class PointNew {
   }
 
   _handleFormSubmit(point) {
+    if (!isOnline()) {
+      toast('You can\'t save point offline');
+      this._component.shake();
+
+      return;
+    }
+
     delete point.id;
 
     this._changeData(

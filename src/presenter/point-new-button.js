@@ -1,6 +1,8 @@
 import PointNewButtonView from '../view/point-new-button.js';
 import {remove, render, RenderPosition, replace} from '../utils/render.js';
 import {UpdateType, Status} from '../utils/const.js';
+import {isOnline} from '../utils/common.js';
+import {toast} from '../utils/toast.js';
 
 
 export default class PointNewButton {
@@ -44,6 +46,11 @@ export default class PointNewButton {
   }
 
   _handleButtonClick() {
+    if (!isOnline()) {
+      toast('You can\'t create new point offline');
+      return;
+    }
+
     this._model.pointNewButton.setStatus(UpdateType.NEW_POINT_FORM_SHOW, Status.DISABLED);
   }
 }

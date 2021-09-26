@@ -34,7 +34,9 @@ export default class Abstract {
     this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / MINUTE_TO_MS}s`;
     setTimeout(() => {
       this.getElement().style.animation = '';
-      callback();
+      if (callback) {
+        callback();
+      }
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 }

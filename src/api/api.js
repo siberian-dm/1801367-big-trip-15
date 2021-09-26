@@ -1,17 +1,11 @@
 import PointsModel from '../model/points';
+import {Url} from '../utils/const';
 
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
   POST: 'POST',
   DELETE: 'DELETE',
-};
-
-const Url = {
-  POINTS: 'points',
-  OFFERS: 'offers',
-  DESTINATIONS: 'destinations',
-  SYNC: 'points/sync',
 };
 
 
