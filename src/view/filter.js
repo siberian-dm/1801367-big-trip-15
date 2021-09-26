@@ -1,23 +1,23 @@
 import AbstractView from './abstract';
-import {FilterType, Status} from '../utils/const';
+import {FilterType} from '../utils/const';
 
-const createFiltersTemplate = (filterType, status) => (
+const createFiltersTemplate = (filterType, isDisabled) => (
   `<form class="trip-filters" action="#" method="get">
       <div class="trip-filters__filter">
         <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter"
-        value="everything" ${filterType === FilterType.EVERYTHING ? 'checked' : ''} ${status === Status.DISABLED ? 'disabled' : ''}>
+        value="everything" ${filterType === FilterType.EVERYTHING ? 'checked' : ''} ${isDisabled[FilterType.EVERYTHING] ? 'disabled' : ''}>
         <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
       </div>
 
       <div class="trip-filters__filter">
         <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter"
-        value="future" ${filterType === FilterType.FUTURE ? 'checked' : ''} ${status === Status.DISABLED ? 'disabled' : ''}>
+        value="future" ${filterType === FilterType.FUTURE ? 'checked' : ''} ${isDisabled[FilterType.FUTURE] ? 'disabled' : ''}>
         <label class="trip-filters__filter-label" for="filter-future">Future</label>
       </div>
 
       <div class="trip-filters__filter">
         <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter"
-        value="past" ${filterType === FilterType.PAST ? 'checked' : ''} ${status === Status.DISABLED ? 'disabled' : ''}>
+        value="past" ${filterType === FilterType.PAST ? 'checked' : ''} ${isDisabled[FilterType.PAST] ? 'disabled' : ''}>
         <label class="trip-filters__filter-label" for="filter-past">Past</label>
       </div>
 
@@ -27,17 +27,17 @@ const createFiltersTemplate = (filterType, status) => (
 
 
 export default class Filter extends AbstractView {
-  constructor(currentFilter, status) {
+  constructor(currentFilter, isDisabled) {
     super();
 
-    this._status = status;
+    this._isDisabled = isDisabled;
     this._currentFilter = currentFilter;
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createFiltersTemplate(this._currentFilter, this._status);
+    return createFiltersTemplate(this._currentFilter, this._isDisabled);
   }
 
   _filterTypeChangeHandler(evt) {

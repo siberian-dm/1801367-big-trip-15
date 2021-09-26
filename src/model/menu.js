@@ -10,7 +10,7 @@ export default class Menu extends AbstractObserver {
 
   setMenuItem(updateType, menuItem) {
     this._activeMenuItem = menuItem;
-    this._notify(updateType, menuItem);
+    this._notify(updateType);
   }
 
   getMenuItem() {

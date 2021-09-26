@@ -96,6 +96,10 @@ export default class Trip {
   }
 
   _renderNoPoints() {
+    if (!this._model.points.getPoints().length && this._model.filter.getFilter() !== FilterType.EVERYTHING) {
+      this._model.filter.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    }
+
     const prevNoPointsComponent = this._noPointsComponent;
 
     this._noPointsComponent = new NoPointsView(this._model.filter.getFilter());

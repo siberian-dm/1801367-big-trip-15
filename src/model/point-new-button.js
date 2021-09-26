@@ -10,7 +10,7 @@ export default class PointNewButton extends AbstractObserver {
 
   setStatus(updateType, status) {
     this._status = status;
-    this._notify(updateType, status);
+    this._notify(updateType);
   }
 
   getStatus() {

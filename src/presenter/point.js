@@ -188,7 +188,7 @@ export default class Point {
 
     this._changeData(
       UserAction.DELETE_POINT,
-      UpdateType.MINOR,
+      UpdateType.MAJOR,
       this._point,
     );
 

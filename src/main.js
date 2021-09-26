@@ -22,7 +22,7 @@ import OffersProvider from './api/offers-provider';
 
 import {UpdateType, Url} from './utils/const';
 
-const AUTHORIZATION = 'Basic hS2235qweSWsd66hjklgatepeRos';
+const AUTHORIZATION = 'Basic hS2235qweSW9OPhjklgatepeRos';
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip/';
 const STORE_PREFIX = 'big-trip-localstorage';
 const STORE_VER = 'v15';

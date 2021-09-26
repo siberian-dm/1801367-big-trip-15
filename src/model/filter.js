@@ -12,7 +12,7 @@ export default class Filter extends AbstractObserver {
 
   setFilter(updateType, filter) {
     this._activeFilter = filter;
-    this._notify(updateType, filter);
+    this._notify(updateType);
   }
 
   getFilter() {
@@ -21,7 +21,7 @@ export default class Filter extends AbstractObserver {
 
   setStatus(updateType, status) {
     this._status = status;
-    this._notify(updateType, status);
+    this._notify(updateType);
   }
 
   getStatus() {

@@ -12,7 +12,7 @@ export default class Sort extends AbstractObserver {
 
   setSort(updateType, sortType) {
     this._activeSortType = sortType;
-    this._notify(updateType, sortType);
+    this._notify(updateType);
   }
 
   getSort() {

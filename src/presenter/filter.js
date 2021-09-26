@@ -1,6 +1,7 @@
 import FilterView from '../view/filter.js';
 import {remove, render, RenderPosition, replace} from '../utils/render.js';
-import {UpdateType} from '../utils/const.js';
+import {UpdateType, FilterType, Status} from '../utils/const.js';
+import {filterPoints} from '../utils/filter.js';
 
 export default class Filter {
   constructor(container, model) {
@@ -12,12 +13,22 @@ export default class Filter {
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._model.filter.addObserver(this._handleModelEvent);
+    this._model.points.addObserver(this._handleModelEvent);
   }
 
   init() {
     const prevComponent = this._component;
 
-    this._component = new FilterView(this._model.filter.getFilter(), this._model.filter.getStatus());
+    const points = this._model.points.getPoints();
+    const status = this._model.filter.getStatus();
+
+    const isDisabled = {
+      [FilterType.EVERYTHING]: points.length === 0 || status !== Status.ENABLED,
+      [FilterType.FUTURE]: filterPoints[FilterType.FUTURE](points).length === 0 || status !== Status.ENABLED,
+      [FilterType.PAST]: filterPoints[FilterType.PAST](points).length === 0 || status !== Status.ENABLED,
+    };
+
+    this._component = new FilterView(this._model.filter.getFilter(), isDisabled);
 
     this._component.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
@@ -31,8 +42,15 @@ export default class Filter {
     remove(prevComponent);
   }
 
-  _handleModelEvent() {
-    this.init();
+  _handleModelEvent(updateType) {
+    switch (updateType) {
+      case UpdateType.INIT:
+      case UpdateType.MINOR:
+      case UpdateType.MAJOR:
+      case UpdateType.STATS_SHOW:
+      case UpdateType.TABLE_SHOW:
+        this.init();
+    }
   }
 
   _handleFilterTypeChange(filterType) {
